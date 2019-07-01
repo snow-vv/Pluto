@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    上线申请模版列表
+                    <span class="tools pull-right">
+                                <a href="/golive/template/create/" class="btn">添加</a>
+                             </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>申请描述</th>
+                            <th>创建者</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for foo in plan_templates %}
+                            <tr>
+                                <td><a href="/golive/template/modify/{{ foo.id }}/">{{ foo.id }}</a></td>
+                                <td>{{ foo.name }}</td>
+                                <td>{{ foo.creator }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}

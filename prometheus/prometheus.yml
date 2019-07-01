@@ -1,0 +1,648 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets: ['localhost:9093']
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'prometheus'
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+    - targets: ['localhost:9090']
+
+  - job_name: 'elasticsearch01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es001:9108']
+
+  - job_name: 'elasticsearch02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es002:9108']
+
+  - job_name: 'elasticsearch03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es003:9108']
+
+  - job_name: 'elasticsearch04'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es004:9108']
+
+  - job_name: 'elasticsearch05'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es005:9108']
+
+  - job_name: 'elasticsearch06'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es006:9108']
+
+  - job_name: 'elasticsearch07'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es007:9108']
+
+  - job_name: 'elasticsearch08'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es008:9108']
+
+  - job_name: 'es01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es001:9100']
+
+  - job_name: 'es02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es002:9100']
+
+  - job_name: 'es03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es003:9100']
+
+  - job_name: 'es04'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es004:9100']
+
+  - job_name: 'es05'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es005:9100']
+
+  - job_name: 'es06'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es006:9100']
+
+  - job_name: 'es07'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es007:9100']
+
+  - job_name: 'es08'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-es008:9100']
+
+  - job_name: 'physical01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-physical001:9100']
+
+  - job_name: 'physical02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-physical002:9100']
+
+  - job_name: 'physical03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-physical003:9100']
+
+  - job_name: 'sun01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-sun001:9100']
+
+  - job_name: 'sun02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-sun002:9100']
+
+  - job_name: 'earth01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-earth001:9100']
+
+  - job_name: 'earth02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-earth002:9100']
+
+  - job_name: 'earth03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-earth003:9100']
+
+  - job_name: 'venus01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-venus001:9100']
+
+  - job_name: 'venus02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-venus002:9100']
+
+  - job_name: 'venus03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-venus003:9100']
+
+  - job_name: 'venus04'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-venus004:9100']
+
+  - job_name: 'push01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-push001:9100']
+
+  - job_name: 'push02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-push002:9100']
+
+  - job_name: 'sms01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-sms001:9100']
+
+  - job_name: 'sms02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-sms002:9100']
+
+  - job_name: 'celery01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-celery001:9100']
+
+  - job_name: 'celery02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-celery002:9100']
+
+  - job_name: 'celery03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-celery003:9100']
+
+  - job_name: 'celery04'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-celery004:9100']
+
+  - job_name: 'celery05'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-celery005:9100']
+
+  - job_name: 'mercury-gpu01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Ubu-gpu001:9100']
+
+  - job_name: 'saturn01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saturn001:9100']
+
+  - job_name: 'saturn02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saturn002:9100']
+
+  - job_name: 'mercury-gpu02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Ubu-gpu002:9100']
+
+  - job_name: 'mercury01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Ubu-mercury001:9100']
+
+  - job_name: 'mercury02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Ubu-mercury002:9100']
+
+  - job_name: 'mercury03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Ubu-mercury003:9100']
+
+  - job_name: 'kafka01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-kafka001:9100']
+
+  - job_name: 'kafka02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-kafka002:9100']
+
+  - job_name: 'kafka03'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-kafka003:9100']
+
+  - job_name: 'saber01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saber001:9100']
+
+  - job_name: 'saber02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saber002:9100']
+
+  - job_name: 'saber-search01'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saber-search001:9100']
+
+  - job_name: 'saber-search02'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-saber-search002:9100']
+
+  - job_name: 'kafka'
+    static_configs:
+    - targets: ['BJ-Alp-Prod-Cos-kafka001:9308']
+   
+  - job_name: 'rds_exporter'
+    static_configs:
+    - targets: ['localhost:7086']
+    scrape_interval: 30s
+
+  - job_name: 'celery-len'
+    static_configs:
+    - targets: ['localhost:9091']
+
+  - job_name: 'tapir'
+    static_configs:
+      - targets: ['172.17.32.6:8888']
+        labels:
+          group: 'tapir'
+
+  - job_name: 'flume'
+    metrics_path: /metrics
+    static_configs:
+      - targets: ['172.16.44.132:9360']
+    metric_relabel_configs:
+      - source_labels: [host]
+        regex: '172.16.44.132:11111'
+        replacement: like_maidian_agent2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.132:11112'
+        replacement: like_maidian_collect2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.132:11121'
+        replacement: like_maidian_web_agent2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.132:11122'
+        replacement: like_maidian_web_collect2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.132:11131'
+        replacement: like_backend_api2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.132:11141'
+        replacement: like_maidian_to_kafka02
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11111'
+        replacement: like_maidian_agent1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11112'
+        replacement: like_maidian_collect1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11121'
+        replacement: like_maidian_web_agent1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11122'
+        replacement: like_maidian_web_collect1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11131'
+        replacement: like_backend_api1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.44.129:11141'
+        replacement: like_maidian_to_kafka01
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11111'
+        replacement: gm_maidian_agent1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11122'
+        replacement: gm_maidian_web_collect1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11121'
+        replacement: gm_maidian_web_agent1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11132'
+        replacement: gm_precise_exposure_collect1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11131'
+        replacement: gm_precise_exposure_agent1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11141'
+        replacement: gm_backend_api1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11151'
+        replacement: gm_maidian_to_kafka01
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.10:11112'
+        replacement: gm_maidian_collect1
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11111'
+        replacement: gm_maidian_agent2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11122'
+        replacement: gm_maidian_web_collect2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11121'
+        replacement: gm_maidian_web_agent2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11132'
+        replacement: gm_precise_exposure_collect2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11131'
+        replacement: gm_precise_exposure_agent2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11141'
+        replacement: gm_backend_api2
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11151'
+        replacement: gm_maidian_to_kafka02
+        target_label: agent_name
+      - source_labels: [host]
+        regex: '172.16.32.20:11112'
+        replacement: gm_maidian_collect2
+        target_label: agent_name
+
+  - job_name: 'overwritten-cluster'
+    scrape_interval: 15s
+    honor_labels: true # don't overwrite job & instance labels
+    static_configs:
+      - targets: ['BJ-Alp-Prod-Cos-tidb001:9091']
+
+  - job_name: "blackbox_exporter_http"
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [http_2xx]
+    static_configs:
+    - targets:
+      - 'http://BJ-Alp-Prod-Cos-tidb001:9091/metrics'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb001:9115
+
+
+  - job_name: "overwritten-nodes"
+    honor_labels: true # don't overwrite job & instance labels
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:9100'
+      - 'BJ-Alp-Prod-Cos-tidb002:9100'
+      - 'BJ-Alp-Prod-Cos-tidb003:9100'
+      - 'BJ-Alp-Prod-Cos-tidb004:9100'
+      - 'BJ-Alp-Prod-Cos-tidb005:9100'
+      - 'BJ-Alp-Prod-Cos-tidb001:9100'
+
+  - job_name: "tidb"
+    honor_labels: true # don't overwrite job & instance labels
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:10080'
+      - 'BJ-Alp-Prod-Cos-tidb002:10080'
+      - 'BJ-Alp-Prod-Cos-tidb001:10080'
+
+
+  - job_name: "pd"
+    honor_labels: true # don't overwrite job & instance labels
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:2379'
+      - 'BJ-Alp-Prod-Cos-tidb002:2379'
+      - 'BJ-Alp-Prod-Cos-tidb003:2379'
+
+
+  - job_name: "tidb_port_probe"
+    scrape_interval: 30s
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:4000'
+      - 'BJ-Alp-Prod-Cos-tidb002:4000'
+      - 'BJ-Alp-Prod-Cos-tidb003:4000'
+      labels:
+        group: 'tidb'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb004:20160'
+      - 'BJ-Alp-Prod-Cos-tidb005:20160'
+      - 'BJ-Alp-Prod-Cos-tidb006:20160'
+      labels:
+        group: 'tikv'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:2379'
+      - 'BJ-Alp-Prod-Cos-tidb002:2379'
+      - 'BJ-Alp-Prod-Cos-tidb003:2379'
+      labels:
+        group: 'pd'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:9091'
+      labels:
+        group: 'pushgateway'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:3000'
+      labels:
+        group: 'grafana'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:9100'
+      - 'BJ-Alp-Prod-Cos-tidb002:9100'
+      - 'BJ-Alp-Prod-Cos-tidb003:9100'
+      - 'BJ-Alp-Prod-Cos-tidb004:9100'
+      - 'BJ-Alp-Prod-Cos-tidb005:9100'
+      - 'BJ-Alp-Prod-Cos-tidb006:9100'
+      labels:
+        group: 'node_exporter'
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001:9115'
+      - 'BJ-Alp-Prod-Cos-tidb002:9115'
+      - 'BJ-Alp-Prod-Cos-tidb003:9115'
+      - 'BJ-Alp-Prod-Cos-tidb004:9115'
+      - 'BJ-Alp-Prod-Cos-tidb005:9115'
+      - 'BJ-Alp-Prod-Cos-tidb006:9115'
+      labels:
+        group: 'blackbox_exporter'
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb001:9115
+
+  - job_name: "blackbox_exporter_172.17.32.125_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb001:9115
+
+  - job_name: "blackbox_exporter_172.17.32.81_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb002:9115
+
+  - job_name: "blackbox_exporter_172.17.32.43_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb003:9115
+
+  - job_name: "blackbox_exporter_172.17.32.143_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb004:9115
+
+  - job_name: "blackbox_exporter_172.17.32.51_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb005:9115
+
+  - job_name: "blackbox_exporter_172.17.33.161_icmp"
+    scrape_interval: 6s
+    metrics_path: /probe
+    params:
+      module: [icmp]
+    static_configs:
+    - targets:
+      - 'BJ-Alp-Prod-Cos-tidb001'
+      - 'BJ-Alp-Prod-Cos-tidb002'
+      - 'BJ-Alp-Prod-Cos-tidb003'
+      - 'BJ-Alp-Prod-Cos-tidb004'
+      - 'BJ-Alp-Prod-Cos-tidb005'
+      - 'BJ-Alp-Prod-Cos-tidb006'
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*)(:80)?
+        target_label: __param_target
+        replacement: ${1}
+      - source_labels: [__param_target]
+        regex: (.*)
+        target_label: ping
+        replacement: ${1}
+      - source_labels: []
+        regex: .*
+        target_label: __address__
+        replacement: BJ-Alp-Prod-Cos-tidb006:9115
+
+rule_files:
+  - 'node.rules.yml'
+  - 'blacker.rules.yml'
+  - 'bypass.rules.yml'
+  - 'pd.rules.yml'
+  - 'tidb.rules.yml'
+  - 'tikv-push.rules.yml'

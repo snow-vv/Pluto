@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+
+    <!--pickers css-->
+    <link rel="stylesheet" type="text/css" href="/static/js/bootstrap-datetimepicker/css/datetimepicker-custom.css"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel">
+                <header class="panel-heading">
+                    基本信息
+                </header>
+                <div class="panel-body">
+                    <form class="form-horizontal adminex-form" id="basic-form">
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">名称</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="name"
+                                       value="{{ template.name if template else '' }}">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <header class="panel-heading">
+                    上线步骤
+                </header>
+                <div class="panel-body">
+                    <ul class="to-do-list" id="sortable-todo">
+                    </ul>
+                    <div class="row">
+                        <div class="col-md-4 col-sm-offset-8">
+                            <form role="form" class="form-inline">
+                                <div class="form-group todo-entry">
+                                    <select class="form-control"
+                                            style="width: 100%" id="task-selecter">
+                                        <option value="GitPullTask">拉代码</option>
+                                        <option value="DeployConfigTask">更改配置</option>
+                                        <option value="PipInstallTask">装依赖</option>
+                                        <option value="RestartTask">重启服务</option>
+                                        <option value="DjangoCommandTask">Django command</option>
+                                        {#                                        <option value="DeployConfigTask">更改配置</option>#}
+                                    </select>
+                                </div>
+                                <button class="btn btn-primary pull-right" id="add-task" type="button">+</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="col-sm-2 col-sm-offset-8">
+                        <button class="btn btn-success pull-right" type="submit" id="task-save" name="audit"
+                                value="0">保存
+                        </button>
+                    </div>
+                    <div class="col-sm-2">
+                        <button class="btn btn-success pull-right" type="submit" id="create-save" name="audit"
+                                value="0">保存并创建申请
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <!--pickers plugins-->
+    <script type="text/javascript" src="/static/js/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <script src="/static/local/js/medivh-select2.js"></script>
+    {% include "golive/tasks.html" %}
+    <script>
+        $(".form_datetime").datetimepicker({format: 'yyyy-mm-dd hh:ii'});
+        function save_task(create) {
+            var tasks = [];
+            $('#sortable-todo').find('form').each(function () {
+                tasks.push($(this).serializeArray())
+            });
+            var data = {
+                "form_data": $("#basic-form").serializeArray(),
+                "tasks": tasks,
+                "create": create
+            };
+            $.ajax({
+                type: "post",
+                url: window.location.href,
+                data: {'data': JSON.stringify(data)},
+                async: false,
+                success: function (data) {
+                    window.location.href = data['href'];
+                }
+            });
+        }
+        $('#task-save').click(function () {
+            save_task(0);
+        });
+
+        $("#create-save").click(function () {
+            save_task(1);
+        });
+
+        $('#add-task').click(function () {
+            var type = $("#task-selecter").val();
+            if (!type) {
+                return;
+            }
+            $("#sortable-todo").append(document.getElementById(type).innerHTML);
+            select2_init();
+        });
+
+        function init_tasks() {
+            var tasks = JSON.parse('{{ template.tasks|safe if template else '[]'  }}');
+            for (i in tasks) {
+                $("#sortable-todo").append(document.getElementById(tasks[i]['type']).innerHTML);
+                var cur = $("#sortable-todo").children("li").last();
+                var t = tasks[i];
+
+                for (k in t) {
+                    var val = t[k];
+                    cur.find("select[name='" + k + "']").attr("init-value", val);
+                    cur.find("[name='" + k + "']").val(val);
+                }
+            }
+        }
+
+        init_tasks();
+        gm_select2_init();
+
+    </script>
+{% endblock %}

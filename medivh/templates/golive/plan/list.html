@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block extra_css %}
+    <link href="https://cdn.datatables.net/1.10.15/css/jquery.dataTables.min.css" rel="stylesheet"/>
+{% endblock %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    上线申请列表
+                    <span class="tools pull-right">
+                                <a href="/golive/plan/create/" class="btn">添加</a>
+                             </span>
+                </header>
+                <div class="panel-body">
+                    <table class="table" id="plan-list">
+                        <thead>
+                        <tr>
+                            <th>申请ID</th>
+                            <th>申请描述</th>
+                            <th>上线时间</th>
+                            <th>状态</th>
+                            <th>申请人</th>
+                            <th>Assign</th>
+                            <th>备注</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for foo in plans %}
+                            <tr>
+                                <td><a href="/golive/plan/modify/{{ foo.id }}/">{{ foo.id }}</a></td>
+                                <td>{{ foo.name }}</td>
+                                <td>{{ str(foo.golive_expected_time)[:16] }}</td>
+                                <td>{{ PlanStatus.getDesc(foo.status) }}</td>
+                                <td>{{ foo.creator }}</td>
+                                <td>{{ foo.assignee or '' }}</td>
+                                <td>{{ foo.text }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block extra_js %}
+    <script src="https://cdn.datatables.net/1.10.15/js/jquery.dataTables.min.js"></script>
+    <script>
+        $("#plan-list").DataTable({
+            "dom": 'ltipr',
+            "language": {
+                "url": "http://cdn.datatables.net/plug-ins/1.10.13/i18n/Chinese.json",
+            },
+            "order": [[0, "desc"]]
+        });
+    </script>
+{% endblock %}

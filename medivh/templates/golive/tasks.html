@@ -1,0 +1,216 @@
+<script type="text/html" id="GitPullTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+
+        <p class="todo-title ">
+            拉代码
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+
+        <div class="panel-body">
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">HostGroup</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote-multiple" name="host_group"
+                                data-ajax--url="/golive/hostgroup/choices/" multiple="multiple">
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label">Service</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote " name="service"
+                                data-ajax--url="/golive/service/choices/">
+                        </select>
+                    </div>
+                </div>
+
+                {#                    <div class="form-group">#}
+                {#                        <label class="col-sm-2 control-label">Version</label>#}
+                {#                        <div class="col-sm-4">#}
+                {#                            <input type="text" class="form-control" name="version">#}
+                {#                        </div>#}
+                {#                    </div>#}
+                <input type="hidden" value="GitPullTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="RestartTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+
+        <p class="todo-title ">
+            重启
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+
+        <div class="panel-body">
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">HostGroup</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote-multiple" name="host_group"
+                                data-ajax--url="/golive/hostgroup/choices/" multiple="multiple">
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label">Service</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote" name="service"
+                                data-ajax--url="/golive/service/choices/">
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" value="RestartTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="DeployConfigTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+
+        <p class="todo-title">
+            更改配置
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+
+        <div class="panel-body">
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">HostGroup</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote-multiple" name="host_group"
+                                data-ajax--url="/golive/hostgroup/choices/" multiple="multiple">
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label">Service</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote" name="service"
+                                data-ajax--url="/golive/service/choices/">
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" value="DeployConfigTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="PipInstallTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+
+        <p class="todo-title ">
+            装依赖
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+
+        <div class="panel-body">
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+
+                    <label class="col-sm-2 control-label">HostGroup</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote-multiple" name="host_group"
+                                data-ajax--url="/golive/hostgroup/choices/" multiple="multiple">
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label">Service</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote" name="service"
+                                data-ajax--url="/golive/service/choices/">
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" value="PipInstallTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="TextTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+        <p class="todo-title">
+            自然语言
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+        <div class="panel-body">
+
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">上线步骤:</label>
+                    <div class="col-sm-4">
+                        <textarea rows="6" class="form-control" name="text"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" value="TextTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>
+<script type="text/html" id="DjangoCommandTask">
+    <li class="clearfix"><span class="drag-marker"><i></i></span>
+        <div class="todo-check pull-left" style="visibility: hidden">
+            <input type="checkbox" value="None" id="todo-check"/>
+            <label for="todo-check"></label>
+        </div>
+
+        <p class="todo-title ">
+            Django Command
+        </p>
+        <div class="todo-actionlist pull-right clearfix">
+            <a href="#" class="todo-remove"><i class="fa fa-times"></i></a>
+        </div>
+
+        <div class="panel-body">
+            <form class="form-horizontal adminex-form">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">HostGroup</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote-multiple" name="host_group"
+                                data-ajax--url="/golive/hostgroup/choices/" multiple="multiple">
+                        </select>
+                    </div>
+                    <label class="col-sm-2 control-label">Service</label>
+                    <div class="col-sm-4">
+                        <select class="form-control select2-remote " name="service"
+                                data-ajax--url="/golive/service/choices/">
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">django command</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" name="command">
+                    </div>
+                </div>
+                <input type="hidden" value="DjangoCommandTask" name="type">
+            </form>
+        </div>
+    </li>
+</script>

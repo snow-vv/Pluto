@@ -1,0 +1,12 @@
+%syntax-version=1.0.0
+%project=medivh
+
+init 2017-07-20T07:46:51Z ZYY <zhangyunyu@gmei.com> # init
+2017_07_24_permission_init 2017-07-24T08:00:36Z ZYY <zhangyunyu@gmei.com> # 初始化权限表
+2017_07_27_relations 2017-07-27T06:27:37Z liushenchen <liushenchen@liushenchen.local> # 添加relation表
+2017_08_23_add_check_command 2017-08-23T07:21:10Z ZYY <zhangyunyu@gmei.com> # 添加检查脚本
+2017_11_02_add_planexecution_description 2017-11-02T07:14:46Z Hukaixuan <hukx.michael@gmail.com> # PlanExecution表添加description字段
+2017_11_14_add_rds_table 2017-11-14T11:47:01Z Hukaixuan <hukx.michael@gmail.com> # 添加rds表
+2017_11_16_add_slow_log_dingding_column_to_rds_table 2017-11-16T06:50:47Z Hukaixuan <hukx.michael@gmail.com> # 添加slow_log_dingding列到rds表
+2018_02_23_add_rollback 2018-02-23T06:22:05Z xufukun <xufukun@igengmei.com> # 添加回滚记录表
+2018_09_11_add_dtabrules_table 2018-09-11T12:07:29Z hukaixuan <hukaixuan@igengmei.com> # add DtabRules table
