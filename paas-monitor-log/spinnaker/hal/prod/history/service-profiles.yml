@@ -1,0 +1,31 @@
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'ORCA':
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  orca-local.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  orca/shutdown.sh: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  orca.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'CLOUDDRIVER':
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  clouddriver.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'DECK':
+  settings.js: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  settings-local.js: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'ECHO':
+  echo.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'FRONT50':
+  aws/front50-credentials_home_spinnaker: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  front50-local.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  front50.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  aws/front50-credentials_root: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'IGOR':
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  igor.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'GATE':
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  gate.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+!!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.service.SpinnakerService$Type 'KAYENTA':
+  kayenta.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  spinnaker.yml: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  aws/kayenta-credentials_root: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}
+  aws/kayenta-credentials_home_spinnaker: !!com.netflix.spinnaker.halyard.deploy.spinnaker.v1.profile.Profile {}

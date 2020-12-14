@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: istio-system-istio-citadel
+    release: prometheus-operator
+  name: istio-citadel
+  namespace: istio-system
+spec:
+  endpoints:
+  - path: /metrics
+    port: http-monitoring
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      app: security
+      istio: citadel

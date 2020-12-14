@@ -1,0 +1,125 @@
+{
+  "index_patterns": ["*-nginx-access-log-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "appname": {
+          "type": "keyword"
+        },
+        "body_bytes_sent": {
+          "type": "keyword"
+        },
+        "clientRealIp": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "content_length": {
+          "type": "keyword"
+        },
+        "gm_request_id": {
+          "type": "keyword"
+        },
+        "gmapps": {
+          "type": "keyword"
+        },
+        "host": {
+          "type": "keyword"
+        },
+        "hostname": {
+          "type": "keyword"
+        },
+        "http_cookie": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "http_referrer": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "http_user_agent": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "http_x_forwarded_for": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "pid": {
+          "type": "keyword"
+        },
+        "remote_addr": {
+          "type": "keyword"
+        },
+        "remote_user": {
+          "type": "keyword"
+        },
+        "request": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "request_body": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "request_id": {
+          "type": "keyword"
+        },
+        "request_method": {
+          "type": "keyword"
+        },
+        "request_time": {
+          "type": "float"
+        },
+        "request_uri": {
+          "type": "text",
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "status": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        },
+        "timestamp": {
+          "type": "date"
+        },
+        "upstream_addr": {
+          "type": "keyword"
+        },
+        "upstream_response_time": {
+          "type": "keyword"
+        },
+        "uri": {
+          "type": "text",
+          "fields": {
+            "keyword": {
+              "type": "keyword"
+            }
+          },
+          "analyzer": "ik_max_word",
+          "search_analyzer": "ik_smart"
+        }
+      }
+    }
+  }
+}

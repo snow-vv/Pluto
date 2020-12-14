@@ -1,0 +1,30 @@
+{
+  "index_patterns": ["exception-log-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "appname": {
+          "type": "keyword"
+        },
+        "filename": {
+          "type": "keyword"
+        },
+        "func_args": {
+          "enabled": false
+        },
+        "gm_request_id": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "stacktrace": {
+          "enabled": false
+        },
+        "timestamp": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

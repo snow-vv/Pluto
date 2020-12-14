@@ -1,0 +1,16 @@
+{
+  "order": 10,
+  "index_patterns": [
+    "nginx-error-log-*", 
+    "diagsearch-es_search-*", 
+    "gm_rpcd_request_error-*", 
+    "gaia-smart_rank-*", 
+    "gaia-cache-*", 
+    "gaia-channel_logger-*",
+    "backend-cpc_click_logger-*",
+    "diagsearch-es_search-*"
+  ],
+  "settings": {
+    "number_of_shards": 3
+  }
+}

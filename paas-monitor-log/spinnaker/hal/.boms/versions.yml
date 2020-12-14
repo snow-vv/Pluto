@@ -1,0 +1,23 @@
+latestHalyard: 1.29.0
+latestSpinnaker: 1.17.5
+versions:
+- version: 1.16.6
+  alias: SecretObsession
+  changelog: https://gist.github.com/spinnaker-release/b200688131077600c458b07e0ae88052
+  minimumHalyardVersion: '1.17'
+  lastUpdate: 1575387465984
+- version: 1.15.7
+  alias: ExtremelyWickedShockinglyEvilAndVile
+  changelog: https://gist.github.com/spinnaker-release/8203c57d946e2fce8a79031716a9cb45
+  minimumHalyardVersion: '1.17'
+  lastUpdate: 1575391293956
+- version: 1.17.5
+  alias: LlamaLlama
+  changelog: https://gist.github.com/spinnaker-release/11b548f1670c75683efaf98ed1a31761
+  minimumHalyardVersion: '1.17'
+  lastUpdate: 1576531282307
+illegalVersions:
+- version: 1.2.0
+  reason: Broken apache config makes the UI unreachable
+- version: 1.4.0
+  reason: UI does not load

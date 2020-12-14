@@ -1,0 +1,30 @@
+{
+  "index_patterns": ["diagsearch-es_search-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "created_at": {
+          "type": "keyword"
+        },
+        "ctx": {
+          "enabled": false
+        },
+        "data": {
+          "enabled": false
+        },
+        "func_name": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "log_type": {
+          "type": "keyword"
+        },
+        "time": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

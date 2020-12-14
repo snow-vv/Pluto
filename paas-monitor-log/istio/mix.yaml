@@ -1,0 +1,771 @@
+
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: instance
+# metadata:
+#   name: accesslog
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   compiledTemplate: logentry
+#   params:
+#     severity: '"Info"'
+#     timestamp: request.time
+#     variables:
+#       sourceIp: source.ip | ip("0.0.0.0")
+#       sourceApp: source.labels["app"] | ""
+#       sourcePrincipal: source.principal | ""
+#       sourceName: source.name | ""
+#       sourceWorkload: source.workload.name | ""
+#       sourceNamespace: source.namespace | ""
+#       sourceOwner: source.owner | ""
+#       destinationApp: destination.labels["app"] | ""
+#       destinationIp: destination.ip | ip("0.0.0.0")
+#       destinationServiceHost: destination.service.host | ""
+#       destinationWorkload: destination.workload.name | ""
+#       destinationName: destination.name | ""
+#       destinationNamespace: destination.namespace | ""
+#       destinationOwner: destination.owner | ""
+#       destinationPrincipal: destination.principal | ""
+#       apiClaims: request.auth.raw_claims | ""
+#       apiKey: request.api_key | request.headers["x-api-key"] | ""
+#       protocol: request.scheme | context.protocol | "http"
+#       method: request.method | ""
+#       url: request.path | ""
+#       responseCode: response.code | 0
+#       responseFlags: context.proxy_error_code | ""
+#       responseSize: response.size | 0
+#       permissiveResponseCode: rbac.permissive.response_code | "none"
+#       permissiveResponsePolicyID: rbac.permissive.effective_policy_id | "none"
+#       requestSize: request.size | 0
+#       requestId: request.headers["x-request-id"] | ""
+#       clientTraceId: request.headers["x-client-trace-id"] | ""
+#       latency: response.duration | "0ms"
+#       connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+#       requestedServerName: connection.requested_server_name | ""
+#       userAgent: request.useragent | ""
+#       responseTimestamp: response.time
+#       receivedBytes: request.total_size | 0
+#       sentBytes: response.total_size | 0
+#       referer: request.referer | ""
+#       httpAuthority: request.headers[":authority"] | request.host | ""
+#       xForwardedFor: request.headers["x-forwarded-for"] | "0.0.0.0"
+#       reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+#       grpcStatus: response.grpc_status | ""
+#       grpcMessage: response.grpc_message | ""
+#     monitored_resource_type: '"global"'
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: instance
+# metadata:
+#   name: tcpaccesslog
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   compiledTemplate: logentry
+#   params:
+#     severity: '"Info"'
+#     timestamp: context.time | timestamp("2017-01-01T00:00:00Z")
+#     variables:
+#       connectionEvent: connection.event | ""
+#       sourceIp: source.ip | ip("0.0.0.0")
+#       sourceApp: source.labels["app"] | ""
+#       sourcePrincipal: source.principal | ""
+#       sourceName: source.name | ""
+#       sourceWorkload: source.workload.name | ""
+#       sourceNamespace: source.namespace | ""
+#       sourceOwner: source.owner | ""
+#       destinationApp: destination.labels["app"] | ""
+#       destinationIp: destination.ip | ip("0.0.0.0")
+#       destinationServiceHost: destination.service.host | ""
+#       destinationWorkload: destination.workload.name | ""
+#       destinationName: destination.name | ""
+#       destinationNamespace: destination.namespace | ""
+#       destinationOwner: destination.owner | ""
+#       destinationPrincipal: destination.principal | ""
+#       protocol: context.protocol | "tcp"
+#       connectionDuration: connection.duration | "0ms"
+#       connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+#       requestedServerName: connection.requested_server_name | ""
+#       receivedBytes: connection.received.bytes | 0
+#       sentBytes: connection.sent.bytes | 0
+#       totalReceivedBytes: connection.received.bytes_total | 0
+#       totalSentBytes: connection.sent.bytes_total | 0
+#       reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+#       responseFlags: context.proxy_error_code | ""
+#     monitored_resource_type: '"global"'
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: rule
+# metadata:
+#   name: stdio
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   match: context.protocol == "http" || context.protocol == "grpc"
+#   actions:
+#   - handler: stdio
+#     instances:
+#     - accesslog
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: rule
+# metadata:
+#   name: stdiotcp
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   match: context.protocol == "tcp"
+#   actions:
+#   - handler: stdio
+#     instances:
+#     - tcpaccesslog
+
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: requestcount
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: "1"
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      request_protocol: api.protocol | context.protocol | "unknown"
+      response_code: response.code | 200
+      response_flags: context.proxy_error_code | "-"
+      permissive_response_code: rbac.permissive.response_code | "none"
+      permissive_response_policyid: rbac.permissive.effective_policy_id | "none"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: requestduration
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: response.duration | "0ms"
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      request_protocol: api.protocol | context.protocol | "unknown"
+      response_code: response.code | 200
+      response_flags: context.proxy_error_code | "-"
+      permissive_response_code: rbac.permissive.response_code | "none" 
+      permissive_response_policyid: rbac.permissive.effective_policy_id | "none"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+    monitored_resource_type: '"UNSPECIFIED"'
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: instance
+# metadata:
+#   name: urlrequestcount
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   compiledTemplate: metric
+#   params:
+#     value: "1"
+#     dimensions:
+#       request_url: request.url_path | "unknown"
+#       destination_app: destination.labels["app"] | "unknown"
+#       response_code: response.code | 200
+#     monitored_resource_type: '"UNSPECIFIED"'
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: instance
+# metadata:
+#   name: urlrequestduration
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   compiledTemplate: metric
+#   params:
+#     value: response.duration | "0ms"
+#     dimensions:
+#       request_url: request.url_path | "unknown"
+#       destination_app: destination.labels["app"] | "unknown"
+#       response_code: response.code | 200
+#     monitored_resource_type: '"UNSPECIFIED"'
+
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: requestsize
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: request.size | 0
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      request_protocol: api.protocol | context.protocol | "unknown"
+      response_code: response.code | 200
+      response_flags: context.proxy_error_code | "-"
+      permissive_response_code: rbac.permissive.response_code | "none" 
+      permissive_response_policyid: rbac.permissive.effective_policy_id | "none"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: responsesize
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: response.size | 0
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      request_protocol: api.protocol | context.protocol | "unknown"
+      response_code: response.code | 200
+      response_flags: context.proxy_error_code | "-"
+      permissive_response_code: rbac.permissive.response_code | "none" 
+      permissive_response_policyid: rbac.permissive.effective_policy_id | "none"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: tcpbytesent
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: connection.sent.bytes | 0
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+      response_flags: context.proxy_error_code | "-"
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: tcpbytereceived
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: connection.received.bytes | 0
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.host | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+      response_flags: context.proxy_error_code | "-"
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: tcpconnectionsopened
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: "1"
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.name | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+      response_flags: context.proxy_error_code | "-"
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: instance
+metadata:
+  name: tcpconnectionsclosed
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledTemplate: metric
+  params:
+    value: "1"
+    dimensions:
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+      source_workload: source.workload.name | "unknown"
+      source_workload_namespace: source.workload.namespace | "unknown"
+      source_principal: source.principal | "unknown"
+      source_app: source.labels["app"] | "unknown"
+      source_version: source.labels["version"] | "unknown"
+      destination_workload: destination.workload.name | "unknown"
+      destination_workload_namespace: destination.workload.namespace | "unknown"
+      destination_principal: destination.principal | "unknown"
+      destination_app: destination.labels["app"] | "unknown"
+      destination_version: destination.labels["version"] | "unknown"
+      destination_service: destination.service.name | "unknown"
+      destination_service_name: destination.service.name | "unknown"
+      destination_service_namespace: destination.service.namespace | "unknown"
+      connection_security_policy: conditional((context.reporter.kind | "inbound") == "outbound", "unknown", conditional(connection.mtls | false, "mutual_tls", "none"))
+      response_flags: context.proxy_error_code | "-"
+    monitored_resource_type: '"UNSPECIFIED"'
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: handler
+metadata:
+  name: prometheus
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  compiledAdapter: prometheus
+  params:
+    metricsExpirationPolicy:
+      metricsExpiryDuration: 20m
+    metrics:
+    - name: requests_total
+      instance_name: requestcount.instance.istio-system
+      kind: COUNTER
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - request_protocol
+      - response_code
+      - response_flags
+      - permissive_response_code
+      - permissive_response_policyid
+      - connection_security_policy
+    - name: request_duration_seconds
+      instance_name: requestduration.instance.istio-system
+      kind: DISTRIBUTION
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - request_protocol
+      - response_code
+      - response_flags
+      - permissive_response_code
+      - permissive_response_policyid
+      - connection_security_policy
+      buckets:
+        explicit_buckets:
+          bounds: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+    # - name: url_requests_total
+    #   instance_name: urlrequestcount.instance.istio-system
+    #   kind: COUNTER
+    #   label_names:
+    #   - request_url
+    #   - destination_app
+    #   - response_code
+    # - name: url_request_duration
+    #   instance_name: urlrequestduration.instance.istio-system
+    #   kind: DISTRIBUTION
+    #   label_names:
+    #   - request_url
+    #   - destination_app
+    #   - response_code
+    #   buckets:
+    #     explicit_buckets:
+    #       bounds: [0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1, 2.5, 5, 10]
+    - name: request_bytes
+      instance_name: requestsize.instance.istio-system
+      kind: DISTRIBUTION
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - request_protocol
+      - response_code
+      - response_flags
+      - permissive_response_code
+      - permissive_response_policyid
+      - connection_security_policy
+      buckets:
+        exponentialBuckets:
+          numFiniteBuckets: 8
+          scale: 1
+          growthFactor: 10
+    - name: response_bytes
+      instance_name: responsesize.instance.istio-system
+      kind: DISTRIBUTION
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - request_protocol
+      - response_code
+      - response_flags
+      - permissive_response_code
+      - permissive_response_policyid
+      - connection_security_policy
+      buckets:
+        exponentialBuckets:
+          numFiniteBuckets: 8
+          scale: 1
+          growthFactor: 10
+    - name: tcp_sent_bytes_total
+      instance_name: tcpbytesent.instance.istio-system
+      kind: COUNTER
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - connection_security_policy
+      - response_flags
+    - name: tcp_received_bytes_total
+      instance_name: tcpbytereceived.instance.istio-system
+      kind: COUNTER
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - connection_security_policy
+      - response_flags
+    - name: tcp_connections_opened_total
+      instance_name: tcpconnectionsopened.instance.istio-system
+      kind: COUNTER
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - connection_security_policy
+      - response_flags
+    - name: tcp_connections_closed_total
+      instance_name: tcpconnectionsclosed.instance.istio-system
+      kind: COUNTER
+      label_names:
+      - reporter
+      - source_app
+      - source_principal
+      - source_workload
+      - source_workload_namespace
+      - source_version
+      - destination_app
+      - destination_principal
+      - destination_workload
+      - destination_workload_namespace
+      - destination_version
+      - destination_service
+      - destination_service_name
+      - destination_service_namespace
+      - connection_security_policy
+      - response_flags
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: promhttp
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  match: (context.protocol == "http" || context.protocol == "grpc") && (match((request.useragent | "-"), "kube-probe*") == false) && (match((request.useragent | "-"), "Prometheus*") == false)
+  actions:
+  - handler: prometheus
+    instances:
+    - requestcount
+    - requestduration
+    - requestsize
+    - responsesize
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: promtcp
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  match: context.protocol == "tcp"
+  actions:
+  - handler: prometheus
+    instances:
+    - tcpbytesent
+    - tcpbytereceived
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: promtcpconnectionopen
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  match: context.protocol == "tcp" && ((connection.event | "na") == "open")
+  actions:
+  - handler: prometheus
+    instances:
+    - tcpconnectionsopened
+---
+apiVersion: "config.istio.io/v1alpha2"
+kind: rule
+metadata:
+  name: promtcpconnectionclosed
+  namespace: istio-system
+  labels:
+    app: mixer
+    chart: mixer
+    heritage: Tiller
+    release: istio
+spec:
+  match: context.protocol == "tcp" && ((connection.event | "na") == "close")
+  actions:
+  - handler: prometheus
+    instances:
+    - tcpconnectionsclosed
+# ---
+# apiVersion: "config.istio.io/v1alpha2"
+# kind: rule
+# metadata:
+#   name: urlhttp
+#   namespace: istio-system
+#   labels:
+#     app: mixer
+#     chart: mixer
+#     heritage: Tiller
+#     release: istio
+# spec:
+#   match: context.protocol == "http" && destination.namespace == "prod" && destination.service.name == "backend" && request.url_path != "/api/ok" && request.url_path.startsWith("/api/")
+#   actions:
+#   - handler: prometheus
+#     instances:
+#     - urlrequestcount
+#     - urlrequestduration

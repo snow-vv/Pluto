@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: istio-system-istio-galley
+    release: prometheus-operator
+  name: istio-galley
+  namespace: istio-system
+spec:
+  endpoints:
+  - path: /metrics
+    port: http-monitoring
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      app: galley
+      istio: galley

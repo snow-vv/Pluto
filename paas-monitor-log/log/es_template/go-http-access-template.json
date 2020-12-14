@@ -1,0 +1,56 @@
+{
+  "index_patterns": ["go-http.access-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "appname": {
+          "type": "keyword"
+        },
+        "duration": {
+          "type": "integer"
+        },
+        "environment": {
+          "properties": {
+            "gm-session-id": {
+              "type": "keyword"
+            },
+            "x-gm-path": {
+              "type": "keyword"
+            },
+            "x-request-id": {
+              "type": "keyword"
+            }
+          }
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "method": {
+          "type": "keyword"
+        },
+        "params": {
+          "enabled": false
+        },
+        "peer": {
+          "type": "keyword"
+        },
+        "resp": {
+          "properties": {
+            "data": {
+              "enabled": false
+            },
+            "error": {
+              "type": "integer"
+            },
+            "message": {
+              "type": "keyword"
+            }
+          }
+        },
+        "time": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

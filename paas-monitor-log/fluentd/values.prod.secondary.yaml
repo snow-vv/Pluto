@@ -1,0 +1,698 @@
+# Default values for fluentd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+image:
+  repository: ccr.ccs.tencentyun.com/gm-tools/gm-fluentd
+  tag: v2.4.1
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - docker-secret
+
+env:
+  LOCATION: secondary
+
+# Extra Environment Values - allows yaml definitions
+extraEnvVars:
+#  - name: VALUE_FROM_SECRET
+#    valueFrom:
+#      secretKeyRef:
+#        name: secret_name
+#        key: secret_key
+
+annotations: {}
+#  prometheus.io/scrape: "true"
+#  prometheus.io/port: "24231"
+
+configMaps:
+  general.conf: |
+    # Prevent fluentd from handling records containing its own logs. Otherwise
+    # it can lead to an infinite loop, when error in sending one message generates
+    # another message which also fails to be sent and so on.
+    <match fluentd.**>
+      @type null
+    </match>
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+      log_level error
+    </system>
+  input.conf: |-
+    <source>
+      @type forward
+      @id input_forward
+      bind 0.0.0.0
+      port 24224
+    </source>
+  nginx.conf: |-
+    <source>
+      @id nginx-access
+      @type tail
+      path /data/log/prod/*/nginx/nginx_access.log
+      pos_file /data/log/position/nginx-access.pos
+      tag nginx.access
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S%:z
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-error
+      @type tail
+      path /data/log/prod/*/nginx/nginx_error.log
+      pos_file /data/log/position/nginx-error.pos
+      tag nginx.error
+      path_key filepath
+      <parse>
+        @type none
+      </parse>
+    </source>
+
+    <filter nginx.access>
+      @type grep
+      <exclude>
+        key request_method
+        pattern /HEAD/
+      </exclude>
+      <exclude>
+        key request_uri
+        pattern /\/api\/ok|\/ws\/ok|\/favicon.ico/
+      </exclude>
+    </filter>
+
+    <filter nginx.access>
+      @type record_transformer
+      enable_ruby true
+      <record>
+        request_body ${(record["request_body"].include? "password") ? record["request_body"].sub!(/password=.*&/, "passowrd=*****&"): record["request_body"]}
+      </record>
+    </filter>
+
+    <filter nginx.*>
+      @type parser
+      key_name filepath
+      reserve_data true
+      remove_key_name_field true
+      <parse>
+        @type regexp
+        expression /^\/data\/log\/prod\/(?<appname>[^\s]+)\/nginx\/[^\s]+\.log$/
+      </parse>
+    </filter>
+
+    <filter nginx.*>
+      @type record_transformer
+      <record>
+        location "#{ENV['LOCATION']}"
+      </record>
+    </filter>
+
+    <filter nginx.*>
+      @type prometheus
+      <metric>
+        name fluentd_input_nginx_records_total
+        type counter
+        desc The total number of nginx incoming records
+        <labels>
+          tag ${tag}
+          location "#{ENV['LOCATION']}"
+          hostname ${hostname}
+        </labels>
+      </metric>
+    </filter>
+
+    <match nginx.**>
+      @type copy
+      <store>
+        @type forward
+        <server>
+          name log1
+          host 172.16.50.2
+          port 24224
+        </server>
+        <buffer tag>
+          @type file
+          path /data/log/buffer/nginx.buffer
+          flush_mode interval
+          flush_interval 1s
+          chunk_limit_size 10m
+          flush_thread_count 3
+          queued_chunks_limit_size 12
+          retry_type exponential_backoff
+          retry_max_times 10
+          retry_wait 10s
+          overflow_action drop_oldest_chunk
+        </buffer>
+      </store>
+
+      <store>
+        @type prometheus
+        <metric>
+          name fluentd_output_nginx_records_total
+          type counter
+          desc The total number of outgoing records
+          <labels>
+            tag ${tag}
+            location "#{ENV['LOCATION']}"
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </store>
+    </match>
+  app.conf: |-
+    <source>
+      @id error-log
+      @type tail
+      path /data/log/prod/*/app/error_logger.log,/data/log/prod/*/app/error.log
+      pos_file /data/log/position/app-error-log.pos
+      tag app.error
+      path_key filepath
+      <parse>
+        @type multiline
+        time_type string
+        time_format %Y-%m-%d %H:%M:%S,%N
+        time_key timestamp
+        keep_time_key true
+        format_firstline /\d{4}-\d{1,2}-\d{1,2}/
+        format1 /^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?<level>[^\s]+) (?<module>[^\s]+) Line:(?<line>[\d]+) (?<message>.*)/
+      </parse>
+    </source>
+
+    <source>
+      @id exception-log
+      @type tail
+      path /data/log/prod/*/app/exception_logger.log,/data/log/prod/*/app/exception.log
+      pos_file /data/log/position/app-exception-log.pos
+      tag app.exception
+      path_key filepath
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+    <source>
+      @id info-log
+      @type tail
+      path /data/log/prod/*/app/info_logger.log,/data/log/prod/*/app/info.log
+      pos_file /data/log/position/app-info-log.pos
+      tag app.info.info
+      path_key filepath
+      <parse>
+        @type multiline
+        time_type string
+        time_format %Y-%m-%d %H:%M:%S,%N
+        time_key timestamp
+        keep_time_key true
+        format_firstline /\d{4}-\d{1,2}-\d{1,2}/
+        format1 /^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?<level>[^\s]+) (?<module>[^\s]+) Line:(?<line>[\d]+) (?<message>.*)/
+      </parse>
+    </source>
+
+    <source>
+      @id filelog-log
+      @type tail
+      path /data/log/prod/*/app/filelog.log
+      pos_file /data/log/position/app-filelog-log.pos
+      tag app.info.filelog
+      path_key filepath
+      <parse>
+        @type multiline
+        time_type string
+        time_format %Y-%m-%d %H:%M:%S,%N
+        time_key timestamp
+        keep_time_key true
+        format_firstline /\d{4}-\d{1,2}-\d{1,2}/
+        format1 /^(?<timestamp>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?<level>[^\s]+) (?<module>[^\s]+) Line:(?<line>[\d]+)  (?<message>.*)/
+      </parse>
+    </source>
+
+    <source>
+      @id app-center-single
+      @type tail
+      path /data/log/prod/gaia/*/smart_rank.log,/data/log/prod/backend/*/cpc_click_logger.log,/data/log/prod/gaia/*/search_logger.log,/data/log/prod/gaia/*/cache.log,/data/log/prod/mimas/*/push_logger.log,/data/log/prod/mimas/*/irrigation_logger.log,/data/log/prod/backend/*/index_adver.log,/data/log/prod/gaia/*/channel_logger.log
+      pos_file /data/log/position/app-center-single-log.pos
+      tag app.center.single
+      path_key filepath
+      <parse>
+        @type regexp
+        expression /^(?<time>\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2},\d{3}) (?<level>[^\s]+) (?<module>[^\s]+) Line:(?<line>[\d]+)  (?<body>.*)$/
+        time_type string
+        time_key time
+        keep_time_key true
+        time_format "%Y-%m-%d %H:%M:%S,%N"
+      </parse>
+    </source>
+
+    <source>
+      @id app-center-json
+      @type tail
+      path /data/log/prod/diagsearch/*/es_search.log
+      pos_file /data/log/position/app-center-json-log.pos
+      tag app.center.json
+      path_key filepath
+      <parse>
+        @type json
+      </parse>
+    </source>
+
+    <source>
+      @id rpcd-request-log
+      @type tail
+      path /data/log/prod/*/app/gm_rpcd_request.log
+      pos_file /data/log/position/app-gm-rpcd-request.pos
+      tag app.gm_rpcd.request
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S.%N%z
+        keep_time_key true
+      </parse>
+    </source>
+
+    <source>
+      @id rpcd-error-log
+      @type tail
+      path /data/log/prod/*/app/gm_rpcd_request_error.log
+      pos_file /data/log/position/app-gm-rpcd-error.pos
+      tag app.gm_rpcd.error
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S.%N%z
+        keep_time_key true
+      </parse>
+    </source>
+
+    <filter app.gm_rpcd.request>
+      @type parser
+      key_name request_json_value
+      reserve_data true
+      remove_key_name_field true
+      reserve_time true
+      <parse>
+        @type regexp
+        expression /^\d+:(?<request_body>.*)$/
+      </parse>
+    </filter>
+
+    <filter app.gm_rpcd.error>
+      @type parser
+      key_name request_json_str
+      reserve_data true
+      remove_key_name_field true
+      reserve_time true
+      <parse>
+        @type json
+      </parse>
+    </filter>
+
+    <filter app.gm_rpcd.request>
+      @type parser
+      key_name request_body
+      reserve_data true
+      remove_key_name_field true
+      reserve_time true
+      <parse>
+        @type json
+      </parse>
+    </filter>
+
+    <filter app.gm_rpcd.*>
+      @type record_transformer
+      enable_ruby true
+      <record>
+        params ${record['params'].to_json}
+        environment ${record['environment'].to_json}
+      </record>
+    </filter>
+
+    <filter app.info.* app.gm_rpcd.* app.exception app.error>
+      @type parser
+      key_name filepath
+      reserve_data true
+      remove_key_name_field true
+      <parse>
+        @type regexp
+        expression /^\/data\/log\/prod\/(?<appname>[^\s]+)\/app\/(?<filename>[^\s]+)\.log$/
+      </parse>
+    </filter>
+
+    <filter app.**>
+      @type record_transformer
+      <record>
+        location "#{ENV['LOCATION']}"
+      </record>
+    </filter>
+
+    <filter app.**>
+      @type prometheus
+      <metric>
+        name fluentd_input_app_records_total
+        type counter
+        desc The total number of app incoming records
+        <labels>
+          tag ${tag}
+          location "#{ENV['LOCATION']}"
+          hostname ${hostname}
+        </labels>
+      </metric>
+    </filter>
+
+    <match app.**>
+      @type copy
+      <store>
+        @type forward
+        <server>
+          name log1
+          host 172.16.50.2
+          port 24224
+        </server>
+        <buffer tag>
+          @type file
+          path /data/log/buffer/app.buffer
+          flush_mode interval
+          flush_interval 2s
+          chunk_limit_size 10m
+          flush_thread_count 4
+          queued_chunks_limit_size 12
+          retry_type exponential_backoff
+          retry_max_times 10
+          retry_wait 10s
+          overflow_action drop_oldest_chunk
+        </buffer>
+      </store>
+
+      <store>
+        @type prometheus
+        <metric>
+          name fluentd_output_app_records_total
+          type counter
+          desc The total number of app outgoing records
+          <labels>
+            tag ${tag}
+            location "#{ENV['LOCATION']}"
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </store>
+    </match>
+
+  go.conf: |-
+    <source>
+      @id go-json
+      @type tail
+      path /data/log/prod/*/app/http.access.log,/data/log/prod/*/app/http.access.error.log
+      pos_file /data/log/position/go.json.pos
+      tag go.json
+      path_key filepath
+      from_encoding UTF-8
+      encoding UTF-8
+      <parse>
+        @type json
+        time_type string
+        time_key time
+        time_format %Y-%m-%dT%H:%M:%S.%N%z
+        timezone +0800
+        keep_time_key true
+      </parse>
+    </source>
+
+    <filter go.*>
+      @type parser
+      key_name filepath
+      reserve_data true
+      remove_key_name_field true
+      <parse>
+        @type regexp
+        expression /^\/data\/log\/prod\/(?<appname>[^\s]+)\/app\/(?<filename>[^\s]+)\.log$/
+      </parse>
+    </filter>
+
+
+    <filter go.*>
+      @type record_transformer
+      <record>
+        location "#{ENV['LOCATION']}"
+      </record>
+    </filter>
+
+    <match go.*>
+      @type copy
+      <store>
+        @type forward
+        <server>
+          name log1
+          host 172.16.50.2
+          port 24224
+        </server>
+        <buffer tag>
+          @type file
+          path /data/log/buffer/go.json.buffer
+          flush_mode interval
+          flush_interval 1s
+          chunk_limit_size 10m
+          flush_thread_count 2
+          queued_chunks_limit_size 12
+          retry_type exponential_backoff
+          retry_max_times 10
+          retry_wait 10s
+          overflow_action drop_oldest_chunk
+        </buffer>
+      </store>
+
+      <store>
+        @type prometheus
+        <metric>
+          name fluentd_output_go_json_total
+          type counter
+          desc The total number of go json output count
+          <labels>
+            tag ${tag}
+            location "#{ENV['LOCATION']}"
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </store>
+    </match>
+  container.conf: |-
+    <source>
+      @type tail
+      path /var/log/containers/*prod*.log
+      exclude_path ["/var/log/containers/*istio-proxy*.log", "/var/log/containers/*istio-init*.log"]
+      pos_file /data/log/position/containers.pos
+      <parse>
+        @type json
+        time_format %Y-%m-%dT%H:%M:%S.%NZ
+        time_type string
+        time_key time
+        keep_time_key true
+      </parse>
+      tag container
+      path_key filepath
+    </source>
+
+    <filter container>
+      @type parser
+      key_name filepath
+      reserve_data true
+      remove_key_name_field true
+      <parse>
+        @type regexp
+        expression /^\/var\/log\/containers\/(?<pod_name>[\S]+)_(?<namespace>[\S]+)_(?<container_name>[\S]+)-(?<container_id>[\S]{64})\.log$/
+      </parse>
+    </filter>
+
+    <filter container>
+      @type record_transformer
+      <record>
+        location "#{ENV['LOCATION']}"
+      </record>
+    </filter>
+
+    <filter container>
+      @type prometheus
+      <metric>
+        name fluentd_input_container_records_total
+        type counter
+        desc The total number of container incoming records
+        <labels>
+          tag ${tag}
+          location "#{ENV['LOCATION']}"
+          hostname ${hostname}
+        </labels>
+      </metric>
+    </filter>
+
+    <match container>
+      @type copy
+      <store>
+        @type forward
+        <server>
+          name log1
+          host 172.16.50.2
+          port 24224
+        </server>
+        <buffer tag>
+          @type file
+          path /data/log/buffer/container.buffer
+          flush_mode interval
+          flush_interval 1s
+          chunk_limit_size 10m
+          flush_thread_count 2
+          queued_chunks_limit_size 6
+          retry_type exponential_backoff
+          retry_max_times 10
+          retry_wait 10s
+          overflow_action drop_oldest_chunk
+        </buffer>
+      </store>
+
+      <store>
+        @type prometheus
+        <metric>
+          name fluentd_output_container_records_total
+          type counter
+          desc The total number of container outgoing records
+          <labels>
+            tag ${tag}
+            location "#{ENV['LOCATION']}"
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </store>
+    </match>
+  zipkin.conf: |-
+    <source>
+      @id prod-tracer-log
+      @type tail
+      path /data/log/prod/*/app/tracer.log
+      pos_file /data/log/position/tracer.pos
+      tag tracer.prod
+      path_key filepath
+      <parse>
+        @type regexp
+        time_type string
+        time_format %Y-%m-%d %T,%L
+        expression /^(?<message>.*)$/
+      </parse>
+    </source>
+    <match tracer.prod>
+      @type kafka_buffered
+      brokers             172.16.44.25:9092,172.16.44.31:9092,172.16.44.45:9092
+      default_topic       gm-tracer-beats
+      output_data_type    attr:message
+    </match>
+  istio.conf: |-
+    <filter **.istio-system>
+      @type record_transformer
+      <record>
+        location "#{ENV['LOCATION']}"
+      </record>
+    </filter>
+
+    <filter **.istio-system>
+      @type prometheus
+      <metric>
+        name fluentd_input_istio_access_records_total
+        type counter
+        desc The total number of istio access incoming records
+        <labels>
+          tag istio-access
+          location "#{ENV['LOCATION']}"
+          hostname ${hostname}
+        </labels>
+      </metric>
+    </filter>
+
+    <match **.istio-system>
+      @type copy
+      <store>
+        @type forward
+        <server>
+          name log1
+          host 172.16.50.2
+          port 24224
+        </server>
+        <buffer tag>
+          @type file
+          path /data/log/buffer/istio.buffer
+          flush_mode interval
+          flush_interval 1s
+          chunk_limit_size 10m
+          flush_thread_count 4
+          queued_chunks_limit_size 12
+          retry_type exponential_backoff
+          retry_max_times 10
+          retry_wait 10s
+          overflow_action drop_oldest_chunk
+        </buffer>
+      </store>
+
+      <store>
+        @type prometheus
+        <metric>
+          name fluentd_output_istio_access_records_total
+          type counter
+          desc The total number of istio access outgoing records
+          <labels>
+            tag istio-access
+            location "#{ENV['LOCATION']}"
+            hostname ${hostname}
+          </labels>
+        </metric>
+      </store>
+    </match>
+  prometheus.conf: |-
+    <source>
+      @type prometheus
+      bind 0.0.0.0
+      port 24231
+      metrics_path /metrics
+    </source>
+    <source>
+      @type prometheus_output_monitor
+      interval 10
+      <labels>
+        hostname ${hostname}
+      </labels>
+    </source>
+
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 500m
+  #  memory: 200Mi
+  # requests:
+  #  cpu: 500m
+  #  memory: 200Mi
+
+## Persist data to a persistent volume
+persistence:
+  enabled: false
+
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  # annotations: {}
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

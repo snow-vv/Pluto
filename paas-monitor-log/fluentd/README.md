@@ -1,0 +1,112 @@
+# fluentd
+
+[Fluentd](https://www.fluentd.org/) collects events from various data sources and writes them to files, RDBMS, NoSQL, IaaS, SaaS, Hadoop and so on. Fluentd helps you unify your logging infrastructure (Learn more about the Unified Logging Layer).
+
+## TL;DR;
+
+```console
+$ helm install stable/fluentd
+```
+
+## Introduction
+
+This chart bootstraps an fluentd deployment on a [Kubernetes](http://kubernetes.io) cluster using the [Helm](https://helm.sh) package manager.
+
+## Installing the Chart
+
+To install the chart with the release name `my-release`:
+
+```console
+$ helm install stable/fluentd --name my-release
+```
+
+The command deploys fluentd on the Kubernetes cluster in the default configuration. The [configuration](#configuration) section lists the parameters that can be configured during installation.
+
+## Uninstalling the Chart
+
+To uninstall/delete the `my-release` deployment:
+
+```console
+$ helm delete my-release
+```
+
+The command removes all the Kubernetes components associated with the chart and deletes the release.
+
+## Configuration
+
+The following table lists the configurable parameters of the fluentd chart and their default values.
+
+Parameter | Description | Default
+--- | --- | ---
+`affinity` | node/pod affinities | `{}`
+`configMaps` | Fluentd configuration | See [values.yaml](values.yaml)
+`output.host` | output host | `elasticsearch-client.default.svc.cluster.local`
+`output.port` | output port | `9200`
+`output.scheme` | output port | `http`
+`output.sslVersion` | output ssl version | `TLSv1`
+`output.buffer_chunk_limit` | output buffer chunk limit | `2M`
+`output.buffer_queue_limit` | output buffer queue limit | `8`
+`image.pullPolicy` | Image pull policy | `IfNotPresent`
+`image.repository` | Image repository | `gcr.io/google-containers/fluentd-elasticsearch`
+`image.tag` | Image tag | `v2.4.0`
+`imagePullSecrets` | Specify image pull secrets | `nil` (does not add image pull secrets to deployed pods)
+`extraEnvVars` | Adds additional environment variables to the deployment (in yaml syntax) | `{}` See [values.yaml](values.yaml)
+`ingress.enabled` | enable ingress | `false`
+`ingress.labels` | list of labels for the ingress rule | See [values.yaml](values.yaml)
+`ingress.annotations` | list of annotations for the ingress rule | `kubernetes.io/ingress.class: nginx` See [values.yaml](values.yaml)
+`ingress.hosts` | host definition for ingress | See [values.yaml](values.yaml)
+`ingress.tls` | tls rules for ingress | See [values.yaml](values.yaml)
+`nodeSelector` | node labels for pod assignment | `{}`
+`replicaCount` | desired number of pods | `1` ???
+`resources` | pod resource requests & limits | `{}`
+`priorityClassName` | priorityClassName | `nil`
+`service.ports` | port definition for the service | See [values.yaml](values.yaml)
+`service.type` | type of service | `ClusterIP`
+`tolerations` | List of node taints to tolerate | `[]`
+`persistence.enabled` | Enable buffer persistence | `false`
+`persistence.accessMode` | Access mode for buffer persistence | `ReadWriteOnce`
+`persistence.size` | Volume size for buffer persistence | `10Gi`
+
+Specify each parameter using the `--set key=value[,key=value]` argument to `helm install`. For example,
+
+```console
+$ helm install stable/fluentd --name my-release \
+  --set=image.tag=v0.0.2,resources.limits.cpu=200m
+```
+
+Alternatively, a YAML file that specifies the values for the above parameters can be provided while installing the chart. For example,
+
+```console
+$ helm install stable/fluentd --name my-release -f values.yaml
+```
+
+> **Tip**: You can use the default [values.yaml](values.yaml)
+
+
+
+
+## 更新
+
+### 更新集群Primary
+
+helm upgrade -f values.prod.primary.yaml fluentd .
+
+helm install --name fluentd --namespace monitor .
+
+### 更新集群Secondary  secondary
+
+helm upgrade -f values.prod.secondary.yaml fluentd .
+
+helm install --name fluentd --namespace monitor .
+
+更新后pod不会自动重启, 需要确认对应的config已经更新了 再重启pod(最好先重启一个, 观察下是否有问题)
+
+
+### 批量重启
+kubectl get pods -n monitor | grep fluentd | awk '{print $1}' | xargs kubectl delete pod -n monitor
+
+
+
+## 测试环境更新
+helm upgrade -f values.test.yaml fluentd .
+重启: kubectl get pods -n efk | grep fluentd | awk '{print $1}' | xargs kubectl delete pod -n efk

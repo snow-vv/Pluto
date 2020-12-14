@@ -1,0 +1,18 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  labels:
+    app: envoy-sidecar
+    release: prometheus-operator
+  name: envoy-sidecar
+  namespace: istio-system
+spec:
+  podMetricsEndpoints:
+  - path: /stats/prometheus
+    targetPort: 15090
+  namespaceSelector:
+    matchNames:
+      - prod
+  selector:
+    matchLabels:
+      app.kubernetes.io/managed-by: spinnaker

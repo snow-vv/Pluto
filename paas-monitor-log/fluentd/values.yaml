@@ -1,0 +1,341 @@
+# Default values for fluentd.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+image:
+  repository: ccr.ccs.tencentyun.com/gm-tools/gm-fluentd
+  tag: v2.4.2
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - docker-secret
+
+env: {}
+
+# Extra Environment Values - allows yaml definitions
+extraEnvVars:
+#  - name: VALUE_FROM_SECRET
+#    valueFrom:
+#      secretKeyRef:
+#        name: secret_name
+#        key: secret_key
+
+annotations: {}
+#  prometheus.io/scrape: "true"
+#  prometheus.io/port: "24231"
+
+configMaps:
+  app.conf: |-
+    <source>
+      @id test-env
+      @type tail
+      path /data/log/test/*/app/*.log,/data/log/test/*/celery/*.log
+      pos_file /data/log/position/fluentd-paas-test.pos
+      tag app.test
+      exclude_path ["/data/log/test/*/app/tracer.log", "/data/log/test/*/celery/tracer.log", "/data/log/test/*/app/gunicorn_access.log"]
+      path_key filepath
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <source>
+      @id merchant-env
+      @type tail
+      path /data/log/merchant/*/app/*.log,/data/log/merchant/*/celery/*.log
+      pos_file /data/log/position/fluentd-paas-merchant.pos
+      tag app.merchant
+      exclude_path ["/data/log/merchant/*/app/tracer.log", "/data/log/merchant/*/celery/tracer.log", "/data/log/merchant/*/app/gunicorn_access.log"]
+      path_key filepath
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <source>
+      @id develop-env
+      @type tail
+      path /data/log/develop/*/app/*.log,/data/log/develop/*/celery/*.log
+      pos_file /data/log/position/fluentd-paas-develop.pos
+      tag app.pre
+      exclude_path ["/data/log/develop/*/app/tracer.log", "/data/log/develop/*/celery/tracer.log", "/data/log/develop/*/app/gunicorn_access.log"]
+      path_key filepath
+      <parse>
+        @type none
+      </parse>
+    </source>
+    <source>
+      @id alpha-env
+      @type tail
+      path /data/log/alpha/*/app/*.log,/data/log/alpha/*/celery/*.log
+      pos_file /data/log/position/fluentd-paas-alpha.pos
+      tag app.pre
+      exclude_path ["/data/log/alpha/*/app/tracer.log", "/data/log/alpha/*/celery/tracer.log", "/data/log/alpha/*/app/gunicorn_access.log"]
+      path_key filepath
+      <parse>
+        @type none
+      </parse>
+    </source>
+
+    <match app.*>
+      @type forward
+      <server>
+        name log1
+        host 172.18.52.6
+        port 24224
+      </server>
+      <buffer tag>
+        @type file
+        path /data/log/buffer/app.buffer
+        flush_mode interval
+        flush_interval 0.3
+        chunk_limit_records 500
+        chunk_limit_size 10m
+        flush_thread_interval 0.3
+        flush_thread_burst_interval 0.3
+        flush_thread_count 16
+        retry_type exponential_backoff
+        retry_max_times 10
+        retry_wait 10s
+        overflow_action throw_exception
+      </buffer>
+    </match>
+  general.conf: |-
+    # Prevent fluentd from handling records containing its own logs. Otherwise
+    # it can lead to an infinite loop, when error in sending one message generates
+    # another message which also fails to be sent and so on.
+    <match fluentd.**>
+      @type null
+    </match>
+  nginx.conf: |-
+    <source>
+      @id nginx-access-backend
+      @type tail
+      path /data/log/*/backend/nginx/www_access.log
+      pos_file /data/log/position/nginx-access-backend.pos
+      tag nginx.access.backend
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S%:z
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-error-backend
+      @type tail
+      path /data/log/*/backend/nginx/www_error.log
+      pos_file /data/log/position/nginx-error-backend.pos
+      tag nginx.error.backend
+      path_key filepath
+      #read_from_head true
+      <parse>
+        @type regexp
+        expression /^(?<time>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) \[(?<log_level>\w+)\] (?<pid>\d+)\#(?<tid>\d+): \*(?<nid>\d+) (?<error>.*)\, client: (?<client>.*)\, server: (?<server>.*)\, request: \"(?<request>.* HTTP\/1.1)\"\,( upstream: \"(?<upstream>.*)\"\,)? host: \"(?<host>.*?)\"(\, referrer: \"(?<referrer>.*)\")?$/
+        time_key time
+        time_type string
+        time_format %Y/%m/%d %H:%M:%S
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-access-ship
+      @type tail
+      path /data/log/*/ship/nginx/www_access.log
+      pos_file /data/log/position/nginx-access-ship.pos
+      tag nginx.access.ship
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S%:z
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-error-ship
+      @type tail
+      path /data/log/*/ship/nginx/www_error.log
+      pos_file /data/log/position/nginx-error-ship.pos
+      tag nginx.error.ship
+      path_key filepath
+      #read_from_head true
+      <parse>
+        @type regexp
+        expression /^(?<time>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) \[(?<log_level>\w+)\] (?<pid>\d+)\#(?<tid>\d+): \*(?<nid>\d+) (?<error>.*)\, client: (?<client>.*)\, server: (?<server>.*)\, request: \"(?<request>.* HTTP\/1.1)\"\,( upstream: \"(?<upstream>.*)\"\,)? host: \"(?<host>.*?)\"(\, referrer: \"(?<referrer>.*)\")?$/
+        time_key time
+        time_type string
+        time_format %Y/%m/%d %H:%M:%S
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-access-flag-ship
+      @type tail
+      path /data/log/*/flag-ship/nginx/www_access.log
+      pos_file /data/log/position/nginx-access-flag-ship.pos
+      tag nginx.access.flag-ship
+      path_key filepath
+      <parse>
+        @type json
+        time_type string
+        time_key timestamp
+        time_format %Y-%m-%dT%H:%M:%S%:z
+        keep_time_key true
+      </parse>
+    </source>
+    <source>
+      @id nginx-error-flag-ship
+      @type tail
+      path /data/log/*/flag-ship/nginx/www_error.log
+      pos_file /data/log/position/nginx-error-flag-ship.pos
+      tag nginx.error.flag-ship
+      path_key filepath
+      #read_from_head true
+      <parse>
+        @type regexp
+        expression /^(?<time>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2}) \[(?<log_level>\w+)\] (?<pid>\d+)\#(?<tid>\d+): \*(?<nid>\d+) (?<error>.*)\, client: (?<client>.*)\, server: (?<server>.*)\, request: \"(?<request>.* HTTP\/1.1)\"\,( upstream: \"(?<upstream>.*)\"\,)? host: \"(?<host>.*?)\"(\, referrer: \"(?<referrer>.*)\")?$/
+        time_key time
+        time_type string
+        time_format %Y/%m/%d %H:%M:%S
+        keep_time_key true
+      </parse>
+    </source>
+    <filter nginx.**>
+      @type parser
+      key_name filepath
+      reserve_data true
+      remove_key_name_field true
+      <parse>
+        @type regexp
+        expression /^\/data\/log\/(?<namespace>[^\s]+)\/[^\s]+\/nginx\/[^\s]+\.log$/
+      </parse>
+    </filter>
+    <filter nginx.access.*>
+      @type grep
+      <exclude>
+        key request_method
+        pattern /HEAD/
+      </exclude>
+    </filter>
+    <match nginx.access.*>
+      @type elasticsearch_dynamic
+      hosts elasticsearch6-service-headless
+      port 9200
+      logstash_format true
+      logstash_prefix ${record['gmapps']}-nginx-access
+      request_timeout 60
+      time_key timestamp
+      id_key request_id
+      <buffer tag>
+        @type file
+        path /data/log/buffer/nginx.access.buffer
+        flush_mode immediate
+        flush_thread_interval 0.3
+        flush_thread_burst_interval 0.3
+        flush_thread_count 4
+        retry_type exponential_backoff
+        overflow_action block
+        flush_thread_count 2
+      </buffer>
+    </match>
+    <match nginx.error.*>
+      @type elasticsearch_dynamic
+      hosts elasticsearch6-service-headless
+      port 9200
+      logstash_format true
+      logstash_prefix ${tag_parts[2]}-nginx-error
+      request_timeout 60
+      time_key time
+      <buffer tag>
+        @type file
+        path /data/log/buffer/nginx.error.buffer
+        flush_mode immediate
+        flush_thread_interval 0.3
+        flush_thread_burst_interval 0.3
+        flush_thread_count 4
+        retry_type exponential_backoff
+        overflow_action block
+      </buffer>
+    </match>
+  system.conf: |-
+    <system>
+      root_dir /tmp/fluentd-buffers/
+      log_level info
+    </system>
+  zipkin.conf: |-
+    <source>
+      @id test-env-tracer-log
+      @type tail
+      path /data/log/test/*/app/tracer.log
+      pos_file /data/log/position/fluentd-paas-test-tracer.pos
+      tag tracer.test
+      path_key filepath
+      <parse>
+        @type regexp
+        time_type string
+        time_format %Y-%m-%d %T,%L
+        expression /^(?<message>.*)$/
+      </parse>
+    </source>
+
+    <source>
+      @id merchant-env-tracer-log
+      @type tail
+      path /data/log/merchant/*/app/tracer.log
+      pos_file /data/log/position/fluentd-paas-merchant-tracer.pos
+      tag tracer.merchant
+      path_key filepath
+      <parse>
+        @type regexp
+        time_type string
+        time_format %Y-%m-%d %T,%L
+        expression /^(?<message>.*)$/
+      </parse>
+    </source>
+
+    <match tracer.test>
+      @type kafka_buffered
+      brokers             kafka-service.test:9092
+      default_topic       gm-tracer-beats
+      output_data_type    attr:message
+    </match>
+    
+    <match tracer.merchant>
+      @type kafka_buffered
+      brokers             kafka-service.merchant:9092
+      default_topic       gm-tracer-beats
+      output_data_type    attr:message
+    </match>
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #  cpu: 500m
+  #  memory: 200Mi
+  # requests:
+  #  cpu: 500m
+  #  memory: 200Mi
+
+## Persist data to a persistent volume
+persistence:
+  enabled: false
+
+  ## If defined, storageClassName: <storageClass>
+  ## If set to "-", storageClassName: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClassName spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  # storageClass: "-"
+  # annotations: {}
+  accessMode: ReadWriteOnce
+  size: 10Gi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

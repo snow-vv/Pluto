@@ -1,0 +1,33 @@
+{
+  "index_patterns": ["filelog-log-*","info-log-*","error-log-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "appname": {
+          "type": "keyword"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "line": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "module": {
+          "type": "keyword"
+        },
+        "timestamp": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

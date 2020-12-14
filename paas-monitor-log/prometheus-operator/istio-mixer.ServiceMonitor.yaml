@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: istio-system-istio-mixer
+    release: prometheus-operator
+  name: istio-mixer
+  namespace: istio-system
+spec:
+  endpoints:
+  - path: /metrics
+    port: http-monitoring
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      app: mixer
+      istio: mixer

@@ -1,0 +1,655 @@
+services:
+  clouddriver:
+    port: 7002
+    internalPort: null
+    address: spin-clouddriver.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/clouddriver:4.7.3-20190813124538
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-clouddriver.spinnaker:7002
+  clouddriverCaching:
+    port: 7002
+    internalPort: null
+    address: spin-clouddriver-caching.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: caching,local,caching-local
+    artifactId: gcr.io/spinnaker-marketplace/clouddriver:4.7.3-20190813124538
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-clouddriver-caching.spinnaker:7002
+  clouddriverRo:
+    port: 7002
+    internalPort: null
+    address: spin-clouddriver-ro.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: ro,local,ro-local
+    artifactId: gcr.io/spinnaker-marketplace/clouddriver:4.7.3-20190813124538
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-clouddriver-ro.spinnaker:7002
+  clouddriverRoDeck:
+    port: 7002
+    internalPort: null
+    address: spin-clouddriver-ro-deck.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: ro-deck,local,ro-deck-local
+    artifactId: gcr.io/spinnaker-marketplace/clouddriver:4.7.3-20190813124538
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-clouddriver-ro-deck.spinnaker:7002
+  clouddriverRw:
+    port: 7002
+    internalPort: null
+    address: spin-clouddriver-rw.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: rw,local,rw-local
+    artifactId: gcr.io/spinnaker-marketplace/clouddriver:4.7.3-20190813124538
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-clouddriver-rw.spinnaker:7002
+  deck:
+    port: 9000
+    internalPort: null
+    address: localhost
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: null
+    username: null
+    password: null
+    env: {}
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/deck:2.9.9-20190727034016
+    overrideBaseUrl: http://spinnaker.prod.wanmeizhensuo.com
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: false
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spinnaker.prod.wanmeizhensuo.com
+  echo:
+    port: 8089
+    internalPort: null
+    address: spin-echo.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/echo:2.5.2-20190708184501
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-echo.spinnaker:8089
+  echoScheduler:
+    port: 8089
+    internalPort: null
+    address: spin-echo-scheduler.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: scheduler,local,scheduler-local
+    artifactId: gcr.io/spinnaker-marketplace/echo:2.5.2-20190708184501
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-echo-scheduler.spinnaker:8089
+  echoWorker:
+    port: 8089
+    internalPort: null
+    address: spin-echo-worker.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: worker,local,worker-local
+    artifactId: gcr.io/spinnaker-marketplace/echo:2.5.2-20190708184501
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-echo-worker.spinnaker:8089
+  fiat:
+    port: 7003
+    internalPort: null
+    address: spin-fiat.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: gcr.io/spinnaker-marketplace/fiat:1.5.3-20190802034017
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-fiat.spinnaker:7003
+  front50:
+    port: 8080
+    internalPort: null
+    address: spin-front50.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/front50:0.17.0-20190510203645
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-front50.spinnaker:8080
+  gate:
+    port: 8084
+    internalPort: null
+    address: localhost
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/gate:1.8.4-20190719034017
+    overrideBaseUrl: http://spin-gate.prod.wanmeizhensuo.com
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-gate.prod.wanmeizhensuo.com
+  igor:
+    port: 8088
+    internalPort: null
+    address: spin-igor.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/igor:1.3.0-20190515102735
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-igor.spinnaker:8088
+  kayenta:
+    port: 8090
+    internalPort: null
+    address: spin-kayenta.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/kayenta:0.9.1-20190628120214
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-kayenta.spinnaker:8090
+  orca:
+    port: 8083
+    internalPort: null
+    address: spin-orca.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/orca:2.7.8-20190813153532
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-orca.spinnaker:8083
+  redis:
+    port: 6379
+    internalPort: null
+    address: spin-redis.spinnaker
+    host: 0.0.0.0
+    scheme: redis
+    healthEndpoint: null
+    username: null
+    password: null
+    env:
+      MASTER: 'true'
+    artifactId: gcr.io/kubernetes-spinnaker/redis-cluster:v2
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: false
+    sidecar: false
+    safeToUpdate: false
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: redis://spin-redis.spinnaker:6379
+  rosco:
+    port: 8087
+    internalPort: null
+    address: spin-rosco.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: /health
+    username: null
+    password: null
+    env:
+      JAVA_OPTS: -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap
+        -XX:MaxRAMFraction=2
+      SPRING_PROFILES_ACTIVE: local
+    artifactId: ccr.ccs.tencentyun.com/gm-spinnaker/rosco:0.13.0-20190709142816
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: true
+    basicAuthEnabled: null
+    monitored: true
+    sidecar: false
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-rosco.spinnaker:8087
+  monitoringDaemon:
+    port: 8008
+    internalPort: null
+    address: spin-monitoring-daemon.spinnaker
+    host: 0.0.0.0
+    scheme: http
+    healthEndpoint: null
+    username: null
+    password: null
+    env: {}
+    artifactId: gcr.io/spinnaker-marketplace/monitoring-daemon:0.13.0-20190430163248
+    overrideBaseUrl: null
+    location: spinnaker
+    kubernetes:
+      imagePullSecrets: []
+      nodeSelector: {}
+      podAnnotations: {}
+      podLabels: {}
+      serviceLabels: {}
+      volumes: []
+      serviceAccountName: null
+      serviceType: ClusterIP
+      nodePort: null
+      useExecHealthCheck: true
+      securityContext: null
+      deploymentStrategy: null
+    enabled: false
+    basicAuthEnabled: null
+    monitored: false
+    sidecar: true
+    safeToUpdate: true
+    targetSize: 1
+    skipLifeCycleManagement: false
+    baseUrl: http://spin-monitoring-daemon.spinnaker:8008

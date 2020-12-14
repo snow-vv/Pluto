@@ -1,0 +1,44 @@
+// before use
+{
+    "order": 11,
+    "index_patterns": [
+      "*-nginx-access-log-*"
+    ],
+    "settings": {},
+    "mappings": {
+      "fluentd": {
+        "properties": {
+          "clientRealIp": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_smart",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "status": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_smart",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "uri": {
+            "type": "text",
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_smart",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          }
+        }
+      }
+    }
+}

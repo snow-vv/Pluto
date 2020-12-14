@@ -1,0 +1,368 @@
+currentDeployment: prod
+deploymentConfigurations:
+- name: prod
+  version: local:1.14.14
+  providers:
+    appengine:
+      enabled: false
+      accounts: []
+    aws:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        baseImages: []
+      defaultKeyPairTemplate: '{{name}}-keypair'
+      defaultRegions:
+      - name: us-west-2
+      defaults:
+        iamRole: BaseIAMRole
+    ecs:
+      enabled: false
+      accounts: []
+    azure:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: azure-linux.json
+        baseImages: []
+    dcos:
+      enabled: false
+      accounts: []
+      clusters: []
+    dockerRegistry:
+      enabled: true
+      accounts:
+      - name: tx-registry
+        requiredGroupMembership: []
+        providerVersion: V1
+        permissions: {}
+        address: https://ccr.ccs.tencentyun.com
+        username: '100009168942'
+        password: 3m4V#TMrUTSIebv1
+        email: fake.email@spinnaker.io
+        cacheIntervalSeconds: 30
+        clientTimeoutMillis: 60000
+        cacheThreads: 1
+        paginateSize: 100
+        sortTagsByDate: false
+        trackDigests: false
+        insecureRegistry: false
+        repositories:
+        - gm-backend/apollo
+        - gm-backend/artemis
+        - gm-backend/ascle
+        - gm-backend/ascle-frontend
+        - gm-backend/backend
+        - gm-backend/cadus
+        - gm-backend/call-center
+        - gm-backend/charon
+        - gm-backend/danmu
+        - gm-backend/doris
+        - gm-backend/flag-ship
+        - gm-backend/gaia
+        - gm-backend/gateway
+        - gm-backend/gm-face
+        - gm-backend/hera
+        - gm-backend/hestia
+        - gm-backend/loki
+        - gm-backend/mimas
+        - gm-backend/passport
+        - gm-backend/phantom
+        - gm-backend/plutus
+        - gm-backend/poll-be
+        - gm-backend/poll-mi
+        - gm-backend/push
+        - gm-backend/ship
+        - gm-backend/sms
+        - gm-backend/themis
+        - gm-backend/thor
+        - gm-backend/zeus
+        - gm-ai/facialai
+        - gm-backend/kefu
+        - gm-backend/hermes
+        - gm-backend/antispam
+        - gm-backend/victor
+        - gm-backend/geoserver
+        - gm-backend/gengmei-m-web
+        - gm-backend/search-tips
+        - gm-backend/finance
+        - gm-backend/channels
+        - gm-backend/static
+        - gm-backend/toufang
+        - gm-backend/dymas
+        - gm-backend/gm-ai
+        - gm-backend/vest
+        - gm-backend/aegis
+        - gm-backend/akso
+      primaryAccount: tx-registry
+    google:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: gce.json
+        baseImages: []
+        zone: us-central1-f
+        network: default
+        useInternalIp: false
+    kubernetes:
+      enabled: true
+      accounts:
+      - name: primary
+        requiredGroupMembership: []
+        providerVersion: V2
+        permissions: {}
+        dockerRegistries: []
+        context: paas-a
+        configureImagePullSecrets: true
+        cacheThreads: 5
+        namespaces:
+        - prod
+        omitNamespaces: []
+        kinds: []
+        omitKinds:
+        - podPreset
+        customResources: []
+        cachingPolicies: []
+        kubeconfigFile: /home/spinnaker/.kube/config.prod.a
+        checkPermissionsOnStartup: false
+        liveManifestCalls: false
+        oAuthScopes: []
+        onlySpinnakerManaged: true
+      - name: secondary
+        requiredGroupMembership: []
+        providerVersion: V2
+        permissions: {}
+        dockerRegistries: []
+        context: paas-b
+        configureImagePullSecrets: true
+        cacheThreads: 5
+        namespaces:
+        - prod
+        omitNamespaces: []
+        kinds: []
+        omitKinds:
+        - podPreset
+        customResources: []
+        cachingPolicies: []
+        kubeconfigFile: /home/spinnaker/.kube/config.prod.a
+        checkPermissionsOnStartup: false
+        liveManifestCalls: false
+        oAuthScopes: []
+        onlySpinnakerManaged: true
+      primaryAccount: primary
+    oracle:
+      enabled: false
+      accounts: []
+      bakeryDefaults:
+        templateFile: oci.json
+        baseImages: []
+    cloudfoundry:
+      enabled: false
+      accounts: []
+  deploymentEnvironment:
+    size: SMALL
+    type: Distributed
+    accountName: primary
+    updateVersions: true
+    consul:
+      enabled: false
+    vault:
+      enabled: false
+    customSizing: {}
+    sidecars: {}
+    initContainers: {}
+    hostAliases: {}
+    affinity: {}
+    nodeSelectors: {}
+    gitConfig:
+      upstreamUser: spinnaker
+    livenessProbeConfig:
+      enabled: false
+    haServices:
+      clouddriver:
+        enabled: false
+        disableClouddriverRoDeck: false
+      echo:
+        enabled: false
+  persistentStorage:
+    persistentStoreType: s3
+    azs: {}
+    gcs:
+      rootFolder: front50
+    redis: {}
+    s3:
+      bucket: spin-data
+      rootFolder: front50
+      pathStyleAccess: true
+      endpoint: http://minio:9000
+      accessKeyId: minioMinio
+      secretAccessKey: minioMinio
+    oracle: {}
+  features:
+    auth: false
+    fiat: false
+    chaos: false
+    entityTags: false
+    jobs: false
+    pipelineTemplates: false
+    artifacts: true
+    managedPipelineTemplatesV2UI: false
+  metricStores:
+    datadog:
+      enabled: false
+      tags: []
+    prometheus:
+      enabled: false
+      add_source_metalabels: true
+    stackdriver:
+      enabled: false
+    period: 30
+    enabled: false
+  notifications:
+    slack:
+      enabled: false
+    twilio:
+      enabled: false
+      baseUrl: https://api.twilio.com/
+  timezone: Asia/Shanghai
+  ci:
+    jenkins:
+      enabled: false
+      masters: []
+    travis:
+      enabled: false
+      masters: []
+    wercker:
+      enabled: false
+      masters: []
+    concourse:
+      enabled: false
+      masters: []
+    gcb:
+      enabled: false
+      accounts: []
+  repository:
+    artifactory:
+      enabled: false
+      searches: []
+  security:
+    apiSecurity:
+      ssl:
+        enabled: false
+      overrideBaseUrl: http://spin-gate.prod.wanmeizhensuo.com
+    uiSecurity:
+      ssl:
+        enabled: false
+      overrideBaseUrl: http://spinnaker.prod.wanmeizhensuo.com
+    authn:
+      oauth2:
+        enabled: false
+        client: {}
+        resource: {}
+        userInfoMapping: {}
+      saml:
+        enabled: false
+        userAttributeMapping: {}
+      ldap:
+        enabled: false
+      x509:
+        enabled: false
+      iap:
+        enabled: false
+      enabled: false
+    authz:
+      groupMembership:
+        service: EXTERNAL
+        google:
+          roleProviderType: GOOGLE
+        github:
+          roleProviderType: GITHUB
+        file:
+          roleProviderType: FILE
+        ldap:
+          roleProviderType: LDAP
+      enabled: false
+  artifacts:
+    bitbucket:
+      enabled: false
+      accounts: []
+    gcs:
+      enabled: false
+      accounts: []
+    oracle:
+      enabled: false
+      accounts: []
+    github:
+      enabled: false
+      accounts: []
+    gitlab:
+      enabled: true
+      accounts:
+      - name: spinnaker
+        token: XfPzMNh3rKN-ZNsMEa7h
+    http:
+      enabled: false
+      accounts: []
+    helm:
+      enabled: false
+      accounts: []
+    s3:
+      enabled: false
+      accounts: []
+    maven:
+      enabled: false
+      accounts: []
+    templates: []
+  pubsub:
+    enabled: false
+    google:
+      enabled: false
+      pubsubType: GOOGLE
+      subscriptions: []
+      publishers: []
+  canary:
+    enabled: true
+    serviceIntegrations:
+    - name: google
+      enabled: false
+      accounts: []
+      gcsEnabled: false
+      stackdriverEnabled: false
+    - name: prometheus
+      enabled: true
+      accounts:
+      - name: spinnaker
+        endpoint:
+          baseUrl: http://prometheus-operator-prometheus.monitor:9090
+        supportedTypes:
+        - METRICS_STORE
+    - name: datadog
+      enabled: false
+      accounts: []
+    - name: signalfx
+      enabled: false
+      accounts: []
+    - name: aws
+      enabled: true
+      accounts:
+      - name: canary-minio
+        bucket: canary-minio
+        rootFolder: canary
+        endpoint: http://minio:9000
+        accessKeyId: minioMinio
+        secretAccessKey: minioMinio
+        supportedTypes:
+        - CONFIGURATION_STORE
+        - OBJECT_STORE
+      s3Enabled: true
+    reduxLoggerEnabled: true
+    defaultMetricsAccount: spinnaker
+    defaultStorageAccount: canary-minio
+    defaultJudge: NetflixACAJudge-v1.0
+    defaultMetricsStore: prometheus
+    stagesEnabled: true
+    templatesEnabled: true
+    showAllConfigsEnabled: true
+  webhook:
+    trust:
+      enabled: false

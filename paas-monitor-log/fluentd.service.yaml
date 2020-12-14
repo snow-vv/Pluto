@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: fluentd
+  name: fluentd
+  namespace: monitor
+spec:
+  ports:
+  - name: http
+    port: 24224
+    protocol: TCP
+    targetPort: 24224
+  selector:
+    app: fluentd
+  type: ClusterIP
+
+# ------
+# kind: VirtualService
+# metadata:
+#   name: prometheus-vs
+#   namespace: istio-system
+# spec:
+#   gateways:
+#   - prometheus-gateway
+#   hosts:
+#   - '*'
+#   http:
+#   - match:
+#     - port: 9090
+#     route:
+#     - destination:
+#         host: prometheus
+#         port:
+#           number: 9090

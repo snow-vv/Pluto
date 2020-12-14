@@ -1,0 +1,45 @@
+{
+  "index_patterns": ["gm_rpcd_request-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+         "appname": {
+          "type": "keyword"
+        },
+        "environment": {
+          "type": "text"
+        },
+        "gm_request_id": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "log_locating_info": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "method": {
+          "type": "keyword"
+        },
+        "params": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "response_json_value": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "timestamp": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

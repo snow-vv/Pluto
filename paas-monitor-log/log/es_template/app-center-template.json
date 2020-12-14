@@ -1,0 +1,37 @@
+{
+  "index_patterns": [
+    "gaia-channel_logger-*",
+    "gaia-smart_rank-*",
+    "gaia-cache-*",
+    "gaia-search_logger-*",
+    "backend-cpc_click_logger-*",
+    "backend-index_adver-*"
+  ],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "body": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "line": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "module": {
+          "type": "keyword"
+        },
+        "time": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

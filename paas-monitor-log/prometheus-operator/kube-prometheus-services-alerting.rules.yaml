@@ -1,0 +1,166 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    app: prometheus-operator
+    release: prometheus-operator
+  name: prometheus-operator-services-alerting.rules
+  namespace: monitor
+spec:
+  groups:
+  - name: services
+    rules:
+    - alert: ServiceErrorsHigh
+      annotations:
+        message: '服务 {{ $labels.destination_service_name }} 请求失败率是 {{ printf "%0.0f" $value }}%, 大于10%, 且持续10分钟'
+      expr: |-
+        sum(rate(istio_requests_total{response_code=~"5.*",destination_service_namespace="prod",response_flags!="UC"}[5m])) by (destination_service_name)
+        /
+        sum(rate(istio_requests_total{destination_service_namespace="prod",response_flags!="UC"}[5m])) by (destination_service_name)
+        * 100 > 20
+      for: 10m
+      labels:
+        severity: warning
+        app: '{{ $labels.destination_service_name }}'
+    - alert: ServiceErrorsHigh
+      annotations:
+        message: '服务 {{ $labels.destination_service_name }} 请求失败率是 {{ printf "%0.0f" $value }}%, 大于25%, 且持续5分钟'
+      expr: |-
+        sum(rate(istio_requests_total{response_code=~"5.*",destination_service_namespace="prod",response_flags!="UC"}[3m])) by (destination_service_name) 
+        /
+        sum(rate(istio_requests_total{destination_service_namespace="prod",response_flags!="UC"}[3m])) by (destination_service_name) 
+        * 100 > 50
+      for: 5m
+      labels:
+        severity: warning
+        app: '{{ $labels.destination_service_name }}'
+    - alert: ServiceErrorsHigh
+      annotations:
+        message: '服务 {{ $labels.destination_service_name }} 请求失败率是 {{ printf "%0.0f" $value }}%, 大于90%'
+      expr: |-
+        sum(rate(istio_requests_total{response_code=~"5.*",destination_service_namespace="prod",response_flags!="UC",reporter="source"}[1m])) by (destination_service_name) 
+        /
+        sum(rate(istio_requests_total{destination_service_namespace="prod",response_flags!="UC",reporter="source"}[1m])) by (destination_service_name) 
+        * 100 > 180
+      labels:
+        severity: critical
+        app: '{{ $labels.destination_service_name }}'
+    # - alert: ServiceBackendQPSHigh
+    #   annotations:
+    #     message: backend 每分钟请求量是5分钟前的2倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="backend"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="backend"}[1m] offset 5m)) by (request_url) > 2
+    #   for: 2m
+    #   labels:
+    #     severity: warning
+    #     app: backend
+    # - alert: ServiceBackendQPSHigh
+    #   annotations:
+    #     message: backend 每分钟请求量是5分钟前的5倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="backend"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="backend"}[1m] offset 5m)) by (request_url) > 5
+    #   labels:
+    #     severity: critical
+    #     app: backend
+    # - alert: ServiceShipQPSHigh
+    #   annotations:
+    #     message: ship 每分钟请求量是5分钟前的2倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="ship"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="ship"}[1m] offset 5m)) by (request_url) > 2
+    #   for: 2m
+    #   labels:
+    #     severity: warning
+    #     app: ship
+    # - alert: ServiceShipQPSHigh
+    #   annotations:
+    #     message: ship 每分钟请求量是5分钟前的2倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="ship"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="ship"}[1m] offset 5m)) by (request_url) > 5
+    #   labels:
+    #     severity: critical
+    #     app: ship
+    # - alert: ServiceFlagShipQPSHigh
+    #   annotations:
+    #     message: flag-ship 每分钟请求量是5分钟前的2倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="flag-ship"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="flag-ship"}[1m] offset 5m)) by (request_url) > 2
+    #   for: 2m
+    #   labels:
+    #     severity: warning
+    #     app: ship
+    # - alert: ServiceFlagShipQPSHigh
+    #   annotations:
+    #     message: flag-ship 每分钟请求量是5分钟前的5倍
+    #   expr: |-
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="flag-ship"}[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_requests_total{destination_service_namespace="prod", destination_app="flag-ship"}[1m] offset 5m)) by (request_url) > 5
+    #   labels:
+    #     severity: critical
+    #     app: ship
+    # - alert: ServiceBackendUrlHigh
+    #   annotations:
+    #     message: backend url {{ $labels.request_url }} 每分钟请求量是5分钟前的2倍
+    #   expr: |-
+    #     sum(increase(istio_url_requests_total[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_url_requests_total[1m] offset 5m)) by (request_url) > 2
+    #   for: 2m
+    #   labels:
+    #     severity: warning
+    #     url: '{{ $labels.request_url }}'
+    # - alert: ServiceBackendUrlHigh
+    #   annotations:
+    #     message: backend url {{ $labels.request_url }} 每分钟请求量是5分钟前的5倍
+    #   expr: |-
+    #     sum(increase(istio_url_requests_total[1m])) by (request_url)
+    #       /
+    #     sum(increase(istio_url_requests_total[1m] offset 5m)) by (request_url) > 5
+    #   labels:
+    #     severity: critical
+    #     url: '{{ $labels.request_url }}'
+    # - alert: ServiceBackendLatencyHigh
+    #   annotations:
+    #     message: backend url {{ $labels.request_url }} 请求平均耗时是5分钟前的2倍
+    #   expr: |-
+    #     (sum(rate(istio_url_request_duration_sum[1m])) by (request_url)
+    #       /
+    #     sum(rate(istio_url_request_duration_count[1m])) by (request_url))
+    #       /
+    #     (sum(rate(istio_url_request_duration_sum[1m] offset 5m)) by (request_url)
+    #       /
+    #     sum(rate(istio_url_request_duration_count[1m] offset 5m)) by (request_url)) > 2
+    #   for: 2m
+    #   labels:
+    #     severity: warning
+    #     url: '{{ $labels.request_url }}'
+    # - alert: ServiceBackendLatencyHigh
+    #   annotations:
+    #     message: backend url {{ $labels.request_url }} 请求平均耗时是5分钟前的4倍
+    #   expr: |-
+    #     (sum(rate(istio_url_request_duration_sum[1m])) by (request_url)
+    #       /
+    #     sum(rate(istio_url_request_duration_count[1m])) by (request_url))
+    #       /
+    #     (sum(rate(istio_url_request_duration_sum[1m] offset 5m)) by (request_url)
+    #       /
+    #     sum(rate(istio_url_request_duration_count[1m]offset 5m)) by (request_url)) > 4
+    #   labels:
+    #     severity: critical
+    #     url: '{{ $labels.request_url }}'
+
+
+
+
+
+

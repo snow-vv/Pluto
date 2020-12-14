@@ -1,0 +1,80 @@
+global:
+  imagePullSecrets:
+  - name: "docker-secret"
+
+alertmanager:
+  config:
+    route:
+      group_by: ['alertname']
+      group_wait: 5s
+      group_interval: 5m
+      repeat_interval: 30m
+      receiver: 'default'
+      routes:
+      - match:
+          alertname: Watchdog
+        receiver: 'null'
+      - match:
+          alertname: ServiceErrorsHigh 
+        receiver: 'default'
+        continue: true
+      - match:
+          alertname: ServiceErrorsHigh 
+          severity: critical
+        receiver: 'mobile'
+    receivers:
+    - name: 'default'
+      webhook_configs:
+      - url: http://127.0.0.1:8060/dingtalk/default/send
+        send_resolved: true
+    - name: 'mobile'
+      webhook_configs:
+      - url: http://172.16.32.40:8018/paas/primary/alert
+        send_resolved: true
+    - name: 'null'
+  alertmanagerSpec:
+    containers:
+      - name: prometheus-webhook-dingtalk
+        image: ccr.ccs.tencentyun.com/gm-tools/prometheus-webhook-dingtalk:v1.1
+        args:
+        - --ding.profile=default=https://oapi.dingtalk.com/robot/send?access_token=dfe0174ca29e2af64bea8c89d8eb2a22e30edcfa24c2380e8237f966cb3904e4
+        env:
+        - name: LOCATION
+          value: primary
+grafana:
+  enabled: true
+
+kubeControllerManager:
+  enabled: false
+
+kubeEtcd:
+  enabled: false
+
+kubeScheduler:
+  enabled: false
+
+kubeProxy:
+  enabled: false
+
+prometheus:
+  prometheusSpec:
+    scrapeInterval: 20s
+    evaluationInterval: 20s
+    retention: 7d
+
+    resources:
+      requests:
+        memory: 6Gi
+        cpu: 500m
+      limits:
+        memory: 8Gi
+        cpu: 1
+
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: cbs
+          accessModes: ["ReadWriteOnce"]
+          resources:
+            requests:
+              storage: 100Gi

@@ -1,0 +1,36 @@
+{
+  "index_patterns": ["container-log-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+         "container_id": {
+          "type": "keyword"
+        },
+        "container_name": {
+          "type": "keyword"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "log": {
+          "type": "keyword",
+          "ignore_above": 1,
+          "doc_values": false,
+          "index": false
+        },
+        "namespace": {
+          "type": "keyword"
+        },
+        "pod_name": {
+          "type": "keyword"
+        },
+        "stream": {
+          "type": "keyword"
+        },
+        "time": {
+          "type": "date"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,19 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    app: istio-system-istio-pilot
+    release: prometheus-operator
+  name: istio-pilot
+  namespace: istio-system
+spec:
+  endpoints:
+  - path: /metrics
+    port: http-monitoring
+  namespaceSelector:
+    matchNames:
+      - istio-system
+  selector:
+    matchLabels:
+      app: pilot
+      istio: pilot

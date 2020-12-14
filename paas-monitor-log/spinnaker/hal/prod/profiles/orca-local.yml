@@ -1,0 +1,9 @@
+pollers:
+  oldPipelineCleanup:
+    enabled: true
+    intervalMs: 3600000
+    thresholdDays: 1
+    minimumPipelineExecutions: 5
+
+tasks:
+  daysOfExecutionHistory: 1

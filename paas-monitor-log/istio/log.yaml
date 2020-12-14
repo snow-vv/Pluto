@@ -1,0 +1,87 @@
+apiVersion: config.istio.io/v1alpha2
+kind: instance
+metadata:
+  name: fluentdhttp
+  namespace: istio-system
+spec:
+  compiledTemplate: logentry
+  params:
+    severity: '"info"'
+    timestamp: request.time
+    variables:
+      sourceApp: source.labels["app"] | "unknown"
+      sourceVersion: source.labels["version"] | "unknown"
+      sourcePod: source.name | "unknown"
+      sourceWorkload: source.workload.name | "unknown"
+      sourceIp: source.ip | ip("0.0.0.0")
+      sourceNamespace: source.namespace | "unknown"
+      destinationApp: destination.labels["app"] | "unknown"
+      destinationVersion: destination.labels["version"] | "unknown"
+      destinationPod: destination.name | "unknown"
+      destinationWorkload: destination.workload.name | ""
+      destinationIp: destination.ip | ip("0.0.0.0")
+      destinationNamespace: destination.namespace | ""
+      method: request.method | ""
+      requestUri: request.path | ""
+      uri: request.url_path | ""
+      rpcMethod: request.headers["x-gm-rpc-method"] | ""
+      forwardedIp: request.headers["x-forwarded-for"] | ""
+      greyHeader: request.headers["x-gm-path"] | ""
+      responseCode: response.code | 0
+      responseFlags: context.proxy_error_code | ""
+      responseSize: response.size | 0
+      requestSize: request.size | 0
+      latency: response.duration | "0ms"
+      reporter: conditional((context.reporter.kind | "inbound") == "outbound", "source", "destination")
+    monitored_resource_type: '"UNSPECIFIED"'
+
+# ---
+# apiVersion: config.istio.io/v1alpha2
+# kind: handler
+# metadata:
+#   name: stdio
+#   namespace: istio-system
+# spec:
+#   compiledAdapter: stdio
+#   params:
+#     severity_levels:
+#       warning: 1 # Params.Level.WARNING
+#     outputAsJson: true
+
+# ---
+# apiVersion: config.istio.io/v1alpha2
+# kind: rule
+# metadata:
+#   name: stdio
+#   namespace: istio-system
+# spec:
+#   match: destination.namespace == "prod" && (context.protocol == "http" || context.protocol == "grpc")
+#   actions:
+#   - handler: stdio
+#     instances:
+#     - fluentdhttp
+
+---
+apiVersion: config.istio.io/v1alpha2
+kind: handler
+metadata:
+  name: fluentd
+  namespace: istio-system
+spec:
+  compiledAdapter: fluentd
+  params:
+    address: fluentd.monitor:24224
+    pushIntervalDuration: 3s
+
+---
+apiVersion: config.istio.io/v1alpha2
+kind: rule
+metadata:
+  name: fluentd
+  namespace: istio-system
+spec:
+  match: (context.protocol == "http" || context.protocol == "grpc") && destination.namespace == "prod" && request.method != "HEAD" && request.url_path != "/api/ok" && request.url_path != "/ping" && request.url_path != "/favicon.ico"
+  actions:
+  - handler: fluentd
+    instances:
+    - fluentdhttp

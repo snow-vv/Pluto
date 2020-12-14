@@ -1,0 +1,90 @@
+{
+  "index_patterns": ["istio-http-access-*"],
+  "mappings": {
+    "fluentd": {
+      "properties": {
+        "destinationApp": {
+          "type": "keyword"
+        },
+        "destinationIp": {
+          "type": "keyword"
+        },
+        "destinationNamespace": {
+          "type": "keyword"
+        },
+        "destinationPod": {
+          "type": "keyword"
+        },
+        "destinationVersion": {
+          "type": "keyword"
+        },
+        "destinationWorkload": {
+          "type": "keyword"
+        },
+        "forwardedIp": {
+          "type": "keyword"
+        },
+        "greyHeader": {
+          "type": "text"
+        },
+        "latency": {
+          "type": "half_float"
+        },
+        "location": {
+          "type": "keyword"
+        },
+        "method": {
+          "type": "keyword"
+        },
+        "reporter": {
+          "type": "keyword"
+        },
+        "requestSize": {
+          "type": "integer"
+        },
+        "requestUri": {
+          "type": "keyword"
+        },
+        "responseCode": {
+          "type": "short"
+        },
+        "responseFlags": {
+          "type": "keyword"
+        },
+        "responseSize": {
+          "type": "integer"
+        },
+        "responseTime": {
+          "type": "keyword"
+        },
+        "rpcMethod": {
+          "type": "keyword"
+        },
+        "severity": {
+          "type": "keyword"
+        },
+        "sourceApp": {
+          "type": "keyword"
+        },
+        "sourceIp": {
+          "type": "keyword"
+        },
+        "sourceNamespace": {
+          "type": "keyword"
+        },
+        "sourcePod": {
+          "type": "keyword"
+        },
+        "sourceVersion": {
+          "type": "keyword"
+        },
+        "sourceWorkload": {
+          "type": "keyword"
+        },
+        "uri": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

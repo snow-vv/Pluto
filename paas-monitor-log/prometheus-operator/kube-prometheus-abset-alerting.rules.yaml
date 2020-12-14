@@ -1,0 +1,88 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  annotations:
+    prometheus-operator-validated: "true"
+  labels:
+    app: prometheus-operator
+    chart: prometheus-operator-6.21.0
+    heritage: Tiller
+    release: prometheus-operator
+  name: prometheus-operator-kubernetes-absent
+  namespace: monitor
+spec:
+  groups:
+  - name: kubernetes-absent
+    rules:
+    - alert: AlertmanagerDown
+      annotations:
+        message: Alertmanager has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-alertmanagerdown
+      expr: absent(up{job="prometheus-operator-alertmanager",namespace="monitor"}
+        == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: KubeAPIDown
+      annotations:
+        message: KubeAPI has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubeapidown
+      expr: absent(up{job="apiserver"} == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: KubeStateMetricsDown
+      annotations:
+        message: KubeStateMetrics has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubestatemetricsdown
+      expr: absent(up{job="kube-state-metrics"} == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: KubeletDown
+      annotations:
+        message: Kubelet has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubeletdown
+      expr: absent(up{job="kubelet"} == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: NodeExporterDown
+      annotations:
+        message: NodeExporter has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-nodeexporterdown
+      expr: absent(up{job="node-exporter"} == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: PrometheusDown
+      annotations:
+        message: Prometheus has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-prometheusdown
+      expr: absent(up{job="prometheus-operator-prometheus",namespace="monitor"} ==
+        1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: PrometheusOperatorDown
+      annotations:
+        message: PrometheusOperator has disappeared from Prometheus target discovery.
+        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-prometheusoperatordown
+      expr: absent(up{job="prometheus-operator-operator",namespace="monitor"} == 1)
+      for: 15m
+      labels:
+        severity: critical
+    - alert: FluentdDaemonSetDown
+      annotations:
+        message: FluentdDaemonSet has disappeared from Prometheus target discovery.
+      expr: absent(up{job="fluentd",namespace="monitor"} == 1)
+      for: 10m
+      labels:
+        severity: critical
+    - alert: IstioMixerToPrometheusDown
+      annotations:
+        message: IstioMixerToPrometheus has disappeared from Prometheus target discovery.
+      expr: absent(up{job="istio-telemetry",namespace="istio-system",instance=~".*:42422$"} == 1)
+      for: 10m
+      labels:
+        severity: critical

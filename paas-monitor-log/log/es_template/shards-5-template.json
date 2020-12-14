@@ -1,0 +1,11 @@
+{
+  "order": 10,
+  "index_patterns": [
+    "container-log-*", 
+    "gaia-search_logger-*",
+    "*-nginx-access-log-*"
+  ],
+  "settings": {
+    "number_of_shards": 5
+  }
+}

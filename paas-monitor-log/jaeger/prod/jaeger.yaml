@@ -1,0 +1,263 @@
+apiVersion: v1
+items:
+- apiVersion: jaegertracing.io/v1
+  kind: Jaeger
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"jaegertracing.io/v1","kind":"Jaeger","metadata":{"annotations":{},"name":"prod","namespace":"observability"},"spec":{"agent":{"strategy":"DaemonSet"},"collector":{"maxReplicas":10,"options":{"kafka":{"producer":{"brokers":"172.16.50.177:9092","topic":"jaeger-spans"}}},"resources":{"limits":{"cpu":"100m","memory":"128Mi"}}},"ingester":{"options":{"ingester":{"deadlockInterval":0},"kafka":{"consumer":{"brokers":"172.16.50.177:9092","topic":"jaeger-spans"}}}},"ingress":{"enabled":false},"storage":{"options":{"es":{"server-urls":"http://172.16.50.160:9200","tls.skip-host-verify":true}},"secretName":"jaeger-secret","type":"elasticsearch"},"strategy":"streaming","ui":{"options":{"dependencies":{"menuEnabled":true},"linkPatterns":[{"key":"customer_id","text":"Search for other traces for customer_id=#{customer_id}","type":"logs","url":"/search?limit=20\u0026lookback=1h\u0026service=frontend\u0026tags=%7B%22customer_id%22%3A%22#{customer_id}%22%7D"}],"menu":[{"items":[{"label":"Log ELK","url":"https://es-pvf8b9rn.kibana.tencentelasticsearch.com:5601/app/kibana"},{"label":"Trace ELK","url":"https://es-h0c5orw0.kibana.tencentelasticsearch.com:5601/app/kibana#/home?_g=()"},{"label":"Metric Grafana","url":"http://grafana.prod.wanmeizhensuo.com/"},{"label":"Error Sentry","url":"http://sentry.wanmeizhensuo.com/sentry/"},{"label":"Jaeger Doc","url":"https://www.jaegertracing.io/docs/latest"}],"label":"More"}]}}}}
+    creationTimestamp: "2020-09-03T06:50:49Z"
+    generation: 13
+    labels:
+      jaegertracing.io/operated-by: observability.jaeger-operator
+    managedFields:
+    - apiVersion: jaegertracing.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:annotations:
+            .: {}
+            f:kubectl.kubernetes.io/last-applied-configuration: {}
+        f:spec:
+          .: {}
+          f:agent:
+            .: {}
+            f:strategy: {}
+          f:collector:
+            .: {}
+            f:maxReplicas: {}
+            f:options:
+              .: {}
+              f:kafka:
+                .: {}
+                f:producer:
+                  .: {}
+                  f:brokers: {}
+                  f:topic: {}
+            f:resources:
+              .: {}
+              f:limits:
+                .: {}
+                f:cpu: {}
+                f:memory: {}
+          f:ingester:
+            .: {}
+            f:options:
+              .: {}
+              f:ingester:
+                .: {}
+                f:deadlockInterval: {}
+              f:kafka:
+                .: {}
+                f:consumer:
+                  .: {}
+                  f:brokers: {}
+                  f:topic: {}
+          f:ingress:
+            .: {}
+            f:enabled: {}
+          f:storage:
+            .: {}
+            f:options:
+              .: {}
+              f:es:
+                .: {}
+                f:server-urls: {}
+                f:tls.skip-host-verify: {}
+            f:secretName: {}
+            f:type: {}
+          f:strategy: {}
+          f:ui:
+            .: {}
+            f:options:
+              .: {}
+              f:dependencies:
+                .: {}
+                f:menuEnabled: {}
+              f:linkPatterns: {}
+              f:menu: {}
+      manager: kubectl
+      operation: Update
+      time: "2020-09-03T08:31:26Z"
+    - apiVersion: jaegertracing.io/v1
+      fieldsType: FieldsV1
+      fieldsV1:
+        f:metadata:
+          f:labels:
+            .: {}
+            f:jaegertracing.io/operated-by: {}
+        f:spec:
+          f:agent:
+            f:config: {}
+            f:options: {}
+            f:resources: {}
+          f:allInOne:
+            .: {}
+            f:config: {}
+            f:options: {}
+            f:resources: {}
+          f:collector:
+            f:config: {}
+          f:ingester:
+            f:config: {}
+            f:resources: {}
+          f:ingress:
+            f:openshift: {}
+            f:options: {}
+            f:resources: {}
+            f:security: {}
+          f:query:
+            .: {}
+            f:options: {}
+            f:resources: {}
+          f:resources: {}
+          f:sampling:
+            .: {}
+            f:options: {}
+          f:storage:
+            f:cassandraCreateSchema: {}
+            f:dependencies:
+              .: {}
+              f:enabled: {}
+              f:resources: {}
+              f:schedule: {}
+            f:elasticsearch:
+              .: {}
+              f:nodeCount: {}
+              f:redundancyPolicy: {}
+              f:resources:
+                .: {}
+                f:limits:
+                  .: {}
+                  f:memory: {}
+                f:requests:
+                  .: {}
+                  f:cpu: {}
+                  f:memory: {}
+              f:storage: {}
+            f:esIndexCleaner:
+              .: {}
+              f:enabled: {}
+              f:numberOfDays: {}
+              f:resources: {}
+              f:schedule: {}
+            f:esRollover:
+              .: {}
+              f:resources: {}
+              f:schedule: {}
+        f:status:
+          .: {}
+          f:phase: {}
+          f:version: {}
+      manager: jaeger-operator
+      operation: Update
+      time: "2020-09-03T08:31:38Z"
+    name: prod
+    namespace: observability
+    resourceVersion: "1003524175"
+    selfLink: /apis/jaegertracing.io/v1/namespaces/observability/jaegers/prod
+    uid: f4f4eab8-a579-43dd-ac53-342fecf78a2f
+  spec:
+    agent:
+      config: {}
+      options: {}
+      resources: {}
+      strategy: DaemonSet
+    allInOne:
+      config: {}
+      options: {}
+      resources: {}
+    collector:
+      config: {}
+      maxReplicas: 10
+      options:
+        kafka:
+          producer:
+            brokers: 172.16.50.177:9092
+            topic: jaeger-spans
+      resources:
+        limits:
+          cpu: 100m
+          memory: 128Mi
+    ingester:
+      config: {}
+      options:
+        ingester:
+          deadlockInterval: 0
+        kafka:
+          consumer:
+            brokers: 172.16.50.177:9092
+            topic: jaeger-spans
+      resources: {}
+    ingress:
+      enabled: false
+      openshift: {}
+      options: {}
+      resources: {}
+      security: none
+    query:
+      options: {}
+      resources: {}
+    resources: {}
+    sampling:
+      options: {}
+    storage:
+      cassandraCreateSchema: {}
+      dependencies:
+        enabled: true
+        resources: {}
+        schedule: 55 23 * * *
+      elasticsearch:
+        nodeCount: 3
+        redundancyPolicy: SingleRedundancy
+        resources:
+          limits:
+            memory: 16Gi
+          requests:
+            cpu: "1"
+            memory: 16Gi
+        storage: {}
+      esIndexCleaner:
+        enabled: true
+        numberOfDays: 7
+        resources: {}
+        schedule: 55 23 * * *
+      esRollover:
+        resources: {}
+        schedule: 0 0 * * *
+      options:
+        es:
+          server-urls: http://172.16.50.160:9200
+          tls.skip-host-verify: true
+      secretName: jaeger-secret
+      type: elasticsearch
+    strategy: streaming
+    ui:
+      options:
+        dependencies:
+          menuEnabled: true
+        linkPatterns:
+        - key: customer_id
+          text: Search for other traces for customer_id=#{customer_id}
+          type: logs
+          url: /search?limit=20&lookback=1h&service=frontend&tags=%7B%22customer_id%22%3A%22#{customer_id}%22%7D
+        menu:
+        - items:
+          - label: Log ELK
+            url: https://es-pvf8b9rn.kibana.tencentelasticsearch.com:5601/app/kibana
+          - label: Trace ELK
+            url: https://es-h0c5orw0.kibana.tencentelasticsearch.com:5601/app/kibana#/home?_g=()
+          - label: Metric Grafana
+            url: http://grafana.prod.wanmeizhensuo.com/
+          - label: Error Sentry
+            url: http://sentry.wanmeizhensuo.com/sentry/
+          - label: Jaeger Doc
+            url: https://www.jaegertracing.io/docs/latest
+          label: More
+  status:
+    phase: Running
+    version: 1.19.2
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

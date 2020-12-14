@@ -1,0 +1,62 @@
+gs://${BUCKET}/${SUBCOMPONENT}/${SUBCOMPONENT_VERSION}/${PROFILE}.
+
+
+# echo
+http://storage.googleapis.com/halconfig/echo/2.5.2-20190708184501/echo-scheduler.yml
+http://storage.googleapis.com/halconfig/echo/2.5.2-20190708184501/echo-worker.yml
+http://storage.googleapis.com/halconfig/echo/2.5.2-20190708184501/echo.yml
+
+
+# clouddriver
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver-caching.yml
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver-bootstrap.yml
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver-ro-deck.yml
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver-ro.yml
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver-rw.yml
+http://storage.googleapis.com/halconfig/clouddriver/4.7.3-20190813124538/clouddriver.yml
+
+
+http://storage.googleapis.com/halconfig/deck/2.9.9-20190727034016/settings.js
+
+http://storage.googleapis.com/halconfig/fiat/1.5.3-20190802034017/fiat.yml
+
+http://storage.googleapis.com/halconfig/front50/0.17.0-20190510203645/front50.yml
+
+http://storage.googleapis.com/halconfig/gate/1.8.4-20190719034017/gate.yml
+
+http://storage.googleapis.com/halconfig/igor/1.3.0-20190515102735/igor.yml
+
+http://storage.googleapis.com/halconfig/kayenta/0.9.1-20190628120214/kayenta.yml
+
+# orca
+http://storage.googleapis.com/halconfig/orca/2.7.8-20190813153532/orca-bootstrap.yml
+http://storage.googleapis.com/halconfig/orca/2.7.8-20190813153532/orca.yml
+
+# rosco
+http://storage.googleapis.com/halconfig/rosco/0.12.0-20190517180000/rosco.yml
+http://storage.googleapis.com/halconfig/rosco/0.12.0-20190517180000/images.yml
+http://storage.googleapis.com/halconfig/rosco/0.12.0-20190517180000/packer.tar.gz
+
+http://storage.googleapis.com/halconfig/versions.yml
+
+
+gs://halconfig/echo/2.5.2-20190708184501/echo.yml
+gs://halconfig/clouddriver/4.7.3-20190813124538/clouddriver.yml
+gs://halconfig/deck/2.9.9-20190727034016/deck.yml
+gs://halconfig/fiat/1.5.3-20190802034017/fiat.yml
+gs://halconfig/front50/0.17.0-20190510203645/front50.yml
+gs://halconfig/gate/1.8.4-20190719034017/gate.yml
+gs://halconfig/igor/1.3.0-20190515102735/igor.yml
+gs://halconfig/kayenta/0.9.1-20190628120214/kayenta.yml
+gs://halconfig/orca/2.7.8-20190813153532/orca.yml
+gs://halconfig/rosco/0.12.0-20190517180000/rosco.yml
+
+
+# 测试环境
+hal deploy apply --service-names echo clouddriver deck front50 gate igor orca
+
+# 正式环境
+hal deploy apply --service-names echo clouddriver deck front50 gate igor orca kayenta
+
+
+

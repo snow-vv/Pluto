@@ -1,0 +1,12 @@
+{
+  "order": 10,
+  "index_patterns": [
+    "filelog-log-*",
+    "info-log-*",
+    "gm_rpcd_request-*",
+    "istio-http-access-*"
+  ],
+  "settings": {
+    "number_of_shards": 7
+  }
+}
