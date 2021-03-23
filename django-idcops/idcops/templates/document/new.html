@@ -1,0 +1,128 @@
+{% extends 'base/new.html' %}
+{% load static app_extras %}
+{% block extra-css %}
+{{form.media.css}}
+{% endblock %}
+
+{%block form%}
+<form action="" method="POST" role="form" class="form" id="{{meta.model_name}}-new">
+  <div class="box-body">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}
+      <div class="help-block">
+        {%if field.field.required%}<span class="text-red">必填 </span>{%endif%}
+          {{ field.help_text|safe}}
+          <div class="text-red">{{ field.errors|safe }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+    <div class="box-footer">
+      <button type="button" class="btn btn-default btn-sm" onclick="window.history.go(-1)">取消并返回</button>
+      <div class="pull-right">
+        <button type="submit" name="_saverlist" class="btn btn-primary btn-sm margin-r-5">保存</button>
+        <button type="submit" name="_addanother" class="btn btn-primary btn-sm margin-r-5">保存并新增</button>
+        <button type="submit" name="_saverview" class="btn btn-primary btn-sm">保存并查看</button>
+      </div>
+    </div>
+  </div>
+</form>
+{% endblock %}
+
+{% block extra-js %}
+{{form.media.js}}
+
+<script type="text/javascript">
+  $(document).ready(function() {
+    
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    };
+
+    // summernote.image.upload
+    function sendFile(file, el) {
+      var form_data = new FormData();
+      //var csrftoken = getCookie('csrftoken');
+      var csrfmiddlewaretoken = $('form input[name="csrfmiddlewaretoken"]').val()
+      //form_data.append('csrftoken', csrftoken);
+      form_data.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+      form_data.append('files', file);
+      $.ajax({
+          data: form_data,
+          type: "POST",
+          url: "{%url 'idcops:upload' %}",
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            $.each(data.files, function (index, file) {
+              $(el).summernote("insertImage", file.url);
+            });
+          }
+      });
+    }
+
+    $('#id_body').summernote({
+      height: 500,
+      tabsize: 2,
+      lang: 'zh-CN',
+      popover: {
+        image: [],
+        link: [],
+        air: []
+        },
+      callbacks: {
+        onImageUpload : function(files, editor, welEditable) {
+          for(var i = files.length - 1; i >= 0; i--) {
+            sendFile(files[i], this);
+          }
+        }
+      }
+    });
+
+    // reset modal cache
+    $('body').on('hidden.bs.modal', '.modal', function () {
+        $(this).removeData('bs.modal');
+    });
+    // Select2
+    $("select").select2({language: "zh-CN"});
+    $(function() {
+        $("#to_shared").click(function(){
+            $(this).button('loading').delay(300).queue(function() {
+              $("#id_mark").val('shared');
+              $(this).button('complete');
+              $(this).removeClass('btn-info').addClass('btn-success');
+              $(this).button('reset').delay(300).dequeue();
+            });
+        });
+    });
+    var formSubmitted = false;
+    var oldFormData = $('form').serialize();
+    $("form").submit(function(e){
+      var newFormData = $('form').serialize();
+      if (oldFormData == newFormData){
+        alert("没有任何改变,已经阻止表单提交.");
+        return false;
+      }
+      formSubmitted = true;
+    });
+  });
+</script>
+{% endblock %}

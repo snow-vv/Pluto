@@ -1,0 +1,23 @@
+{% extends 'base/detail.html' %}
+{% load app_extras %}
+{% block main-content %}
+<div class="box box-{%if object.actived%}success{%else%}danger{%endif%}">
+  <div class="box-header with-border">
+    <h3 class="box-title">{{object}}</h3>
+    <div class="box-tools pull-right">
+      <button type="button" onclick="window.history.go(-1)" title="返回上一页" class="btn btn-default btn-sm margin-r-5">
+        <i class="fa fa-arrow-left"></i><span class="hidden-xs"> 返回</span>
+      </button>
+      {%if 'idcops.change_'|add:meta.model_name in perms and can_change%}
+      <a class="btn btn-primary btn-sm margin-r-5" title="编辑 {{object}}" href="{%url 'idcops:update' meta.model_name object.pk%}">
+        <i class="fa fa-edit"></i><span class="hidden-xs"> 编辑</span></a>
+      {%endif%}
+      <a class="btn btn-default btn-sm" data-toggle="collapse" data-parent="#accordion" href="#remark-info" aria-expanded="true">
+        <i class="fa fa-bookmark-o"></i><span class="hidden-xs">{%if object.remarks %} {{object.remarks.count}}条备注{%else%} 新建备注{%endif%}</span></a>
+    </div>
+  </div>
+  <div class="box-body">
+  <p>{{object.body|safe}}</p>
+  </div>
+</div>
+{% endblock %}

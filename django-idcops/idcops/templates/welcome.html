@@ -1,0 +1,74 @@
+{% extends 'accounts/base.html' %}
+{% load i18n admin_static %}
+{% block title %}初始化设置... 数据中心运维平台 - IDCOPS{% endblock %}
+
+{% block body %}
+
+<body class="skin-blue layout-top-nav">
+    <div class="content-wrapper" style="min-height: 585.002px;">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <!-- Content Header (Page header) -->
+                    <section class="content-header">
+                        <h1 class="text-center">初始化您的系统
+                        </h1>
+                    </section>
+                    <section class="content">
+                        {%block form%}
+                        <div class="box-body">
+                            <div class="box">
+                                <div class="box-header with-border">
+                                    <h3 class="box-title">初始化一个数据中心</h3>
+                                </div>
+                                <!-- /.box-header -->
+                                <!-- form start -->
+                                <form action="" method="POST" role="form" class="form">
+
+
+                                    {% csrf_token %}
+                                    {% for hidden in form.hidden_fields %}
+                                    {{ hidden }}
+                                    {% endfor %}
+                                    <div class="box-body">
+                                        <div class="form-group">
+                                            {% if messages %}
+                                            {% for message in messages %}
+                                            <div id="message"
+                                                class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible no-margin">
+                                                {{ message }}
+                                            </div>
+                                            {% endfor %}
+                                            {% endif %}
+                                        </div>
+                                        {% for field in form.visible_fields %}
+                                        <div class="form-group">
+                                            <label for="{{ field.id_for_label }}" class="control-label">
+                                                {{ field.label }}
+                                            </label>
+                                            {{ field }}
+                                            <p class="help-block">
+                                                {%if field.field.required%}
+                                                <span class="text-red">*</span>
+                                                {%else%}
+                                                <span class="text-muted">选填</span>
+                                                {%endif%}
+                                                {{ field.help_text|safe}}
+                                            </p>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                    <!-- /.box-body -->
+                                    <div class="box-footer">
+                                        <button type="submit" class="pull-right btn btn-primary">提交</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        {%endblock form%}
+                    </section>
+                </div>
+            </div>
+        </div>
+</body>
+{% endblock body %}

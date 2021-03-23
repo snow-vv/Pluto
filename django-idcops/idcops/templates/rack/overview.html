@@ -1,0 +1,75 @@
+<table id="rack-detail" style="margin:0; padding:0;" class="table table-bordered text-center nowarp table-condensed">
+  <thead>
+    <tr class="active">
+        <th style="width:2%" class="bg-light-blue">U</th>
+        <th style="width:16%" class="bg-light-blue">设备编号</th>
+        <th style="width:2%" class="bg-light-blue">U</th>
+        <th>PDU</th>
+        <th>设备SN号</th>
+        <th>IP地址</th>
+        <th>设备型号</th>
+        <th>客户名称</th>
+        <th class="no-print">操作</th>
+    </tr>
+  </thead>
+  <tbody>
+      {% for u in units %}
+      {% if not u.actived %}
+        <tr name="hasdevice" {%if u in obj_units%}class="danger"{%else%}class="success"{%endif%}>
+          {%with ucount=u.online.units.all%}
+          <td style="vertical-align: middle;" class="no-padding bg-light-blue">{{u}}</td>
+          {%if not u.repeat%}
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">
+            <a href="{%url 'idcops:detail' 'online' u.online.pk %}">{{u.online.name}}</a>
+          </td>
+          {%endif%}
+          <td style="vertical-align: middle;" class="no-padding bg-light-blue">{{u}}</td>
+          {% if not u.repeat %}
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">
+            {%if u.online.pdus%}
+              {%for pdu in u.online.pdus.all %}
+                <span>{{pdu}} </span>
+              {%endfor%}
+            {%else%}
+              <span>未录入 </span>
+            {%endif%}
+          </td>
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">
+            {%if u.online.sn|first == '_' %}<span>无法查看</span>{%else%}<span>{{ u.online.sn|upper }}</span>{%endif%}
+          </td>
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">{{u.online.ipaddr}}</td>
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">{{u.online.model}}</td>
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding">{{u.online.client}}</td>
+          <td style="vertical-align: middle;" rowspan="{{ucount|length}}" class="no-padding no-print">
+          <a href="{%url 'idcops:update' 'online' u.online.pk %}">修改</a>
+          </td>
+          {%endif%}
+          {%endwith%}
+        </tr>
+      {% else %}
+        <tr name="nonedevice">
+          <td class="no-padding bg-light-blue">{{u}}</td>
+          <td class="no-padding"></td>
+          <td class="no-padding bg-light-blue">{{u}}</td>
+          <td class="no-padding"></td>
+          <td class="no-padding"></td>
+          <td class="no-padding"></td>
+          <td class="no-padding"></td>
+          <td class="no-padding"></td>
+          <td class="no-padding no-print"></td>
+        </tr>
+      {% endif %}
+      {% endfor %}
+      <tr>
+        <td class="no-padding bg-light-blue">-1</td>
+        <td class="no-padding bg-light-blue"></td>
+        <td class="no-padding bg-light-blue">-1</td>
+        <!-- <td class="no-padding"></td>
+        <td class="no-padding"></td>
+        <td class="no-padding"></td>
+        <td class="no-padding"></td>
+        <td class="no-padding"></td>
+        <td class="no-padding no-print"></td> -->
+      </tr>
+  </tbody>
+</table>

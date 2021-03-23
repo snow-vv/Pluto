@@ -1,0 +1,33 @@
+{% extends 'base/edit.html' %}
+{% load app_extras %}
+
+{% block page-extra %}
+{%if request.GET.rack_id%}
+{% rack_overview request.GET.rack_id object.units.all %}
+{%else%}
+{% rack_overview object.rack_id object.units.all %}
+{%endif%}
+{% endblock page-extra %}
+
+{% block SubScript %}
+<script>
+$(document).ready(function (){
+
+//选择机柜跳转
+$("#id_rack").change(function(){
+  var selected=$(this).children('option:selected').val();
+  if (selected > 0){
+    document.location.href="?rack_id="+selected+"";
+  };
+});
+//重置该设备的机柜号
+
+{%if request.GET.rack_id%}
+  var rack_id = {{request.GET.rack_id}};
+  $("#id_rack option[value=rack_id]").attr('selected', true);
+  $("#id_rack").val(rack_id).trigger('change.select2');
+{%endif%}
+
+});
+</script>
+{% endblock SubScript %}

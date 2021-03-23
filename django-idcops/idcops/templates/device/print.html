@@ -1,0 +1,189 @@
+{% extends 'base/base.html' %}
+{% spaceless %}
+{% load static %}
+{% block extra-css0 %}
+<style>
+@media print {
+  a[href]:after {
+    content: none !important;
+  }
+  th {
+    padding: 3px 4px !important;
+  }
+  td {
+    padding: 2px 4px !important;
+  }
+  .box {
+    border-top:none;
+  }
+  .box-body {
+    padding:0 !important;
+  }
+  footer {
+    padding: 10px 15px !important;
+  }
+}
+.table>thead:first-child>tr:first-child>th>a {
+  color: #333 !important;
+}
+.table>thead:first-child>tr:first-child>th>a:hover,
+.table>thead:first-child>tr:first-child>th>a:active,
+.table>thead:first-child>tr:first-child>th>a:focus {
+  color: #111 !important;
+}
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #777 !important;
+  }
+</style>
+{% endblock %}
+{% block content-header %}
+<h1>
+<button type="button" class="btn btn-default btn-sm margin-r-5" onclick="window.history.go(-1)">
+  <i class="fa fa-arrow-circle-o-left"></i><span> 返回上一页</span>
+</button>
+<button class="btn btn-danger btn-sm" onclick="window.print()">
+  <i class="fa fa-print"></i>
+  <span class="hidden-xs"> 确认打印</span>
+</button>
+</h1>
+{% endblock %}
+{% block main-content %}
+<div class="box">
+  <div class="box-body">
+  <br>
+  <table id="header" class="table table-bordered table-condensed no-padding" style="table-layout:fixed;margin-bottom:20px">
+  <tr>
+    <td rowspan="4" width="60%"><img src="{% static "idcops/img/logo.jpg" %}" width="200px" class="img-responsive" alt="idcops Logo"></td>
+  </tr>
+  <tr>
+    <th>文件编号</th>
+    <td>IDC-SOP-RCD-001</td>
+  </tr>
+  <tr>
+    <td><b>所有者</b></td>
+    <td>机房服务部</td>
+  </tr>
+  <tr>
+    <td><b>批准人</b></td>
+    <td>总经理</td>
+  </tr>
+  <tr>
+    <td nowrap="nowrap" rowspan="3"><font size="5"><b><span>设 备 拆 装 服 务 确 认 单</span></b></font></td>
+  <tr>
+    <td><b>生效日期</b></td>
+    <td>2003/07/28</td>
+  </tr>
+  <tr>
+    <td><b>发布范围</b></td>
+    <td>机房服务部</td>
+  </tr>
+
+  </table>
+
+{%for obj in queryset%}
+{% if forloop.first %}
+<b>1、客户名称：{{obj.client}}</b><br>
+<b>2、服务类型：{{obj.client.style}}</b></br>
+{% block operation %}
+<b>3、操作类型：{%if obj.status == 'moved'%}迁移{%elif obj.status == 'offline' %}下架{%else%}上架{%endif%}</b></br>
+{% endblock operation %}
+<b>4、设备数量：{{queryset.count}} 台</b><br>
+<b>5、打印单号：{{ticket}}</b>
+{%endif%}
+{%endfor%}
+<br>
+{% block object_items %}
+<table id="objects" class="table table-bordered table-condensed" style="table-layout:fixed;margin-bottom:20px">
+  {% for obj in queryset %}
+  {% if forloop.first %}
+  {% if obj.status == 'moved' %}
+    {% include 'device/moved.html' %}
+  {% else %}
+    {% include 'device/moveup.html' %}
+  {% endif %}
+  {% endif %}
+  {% endfor %}
+
+</table>
+{% endblock object_items %}
+
+<b>5、客户评价：</b>
+<table id="service" class="table table-bordered table-condensed" style="table-layout:fixed;margin-bottom:20px">
+  <thead>
+    <tr class="active">
+      <th width="12%">评价项目</th>
+      <th width="12%">满意</th>
+      <th width="12%">一般</th>
+      <th width="12%">不满意</th>
+      <th>意见及建议</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>态度</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>响应时间</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>实施时间</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td>工作质量</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
+
+<b>6、经办人信息：</b><br>
+ 请确认以上表中信息与设备实际情况相符合后再签字。如对以上信息进行调整请在当日通知世纪互联。
+<table id="attending" class="table table-bordered text-center table-condensed" style="table-layout:fixed;margin-bottom:0">
+    <thead class="text-center">
+      <tr class="active">
+        <th class="text-center" colspan="2">客户方</th>
+        <th class="text-center" colspan="2">世纪互联</th>
+      </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td width="20%">经办人签字</td>
+            <td width="30%"></td>
+            <td width="20%">经办人签字、盖章</td>
+            <td width="30%">{{request.user}}</td>
+        </tr>
+        <tr>
+            <td width="20%">手机/电话</td>
+            <td width="30%"></td>
+            <td width="20%">电话/分机</td>
+            <td width="30%">400-651-9966</td>
+        </tr>
+        <tr>
+            <td width="20%">经办日期</td>
+            <td width="30%">{% now "Y/m/d" %}</td>
+            <td width="20%">经办日期</td>
+            <td width="30%">{% now "Y/m/d" %}</td>
+        </tr>
+    </tbody>
+</table>
+<br>
+注：本表一式两份，世纪互联与客户方各持一份，具有同等效力。
+</div>
+</div>
+{%endblock main-content%}
+{% endspaceless %}

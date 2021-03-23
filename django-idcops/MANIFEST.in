@@ -1,0 +1,22 @@
+include LICENSE
+include README.rst
+include README.md
+include setup.py
+include requirements.txt
+
+recursive-include idcops/lib *
+recursive-include idcops/static *
+recursive-include idcops/templates *
+recursive-include idcops/migrations *
+recursive-include idcops/templatetags *
+
+recursive-exclude idcops/templatetags *.py[co]
+recursive-exclude idcops/migrations *.py[co]
+recursive-exclude idcops/lib *.py[co]
+recursive-exclude idcops/ __pycache__
+recursive-exclude idcops_proj/ *
+recursive-exclude static/ *
+recursive-exclude media/ *
+recursive-exclude screenshots/ *
+
+global-exclude *.py[co]

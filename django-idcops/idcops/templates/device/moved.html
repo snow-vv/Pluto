@@ -1,0 +1,40 @@
+<thead>
+  <tr class="active">
+    <th width="4%">#</th>
+    <th width="20%">设备编号</th>
+    <th>设备型号</th>
+    <th>SN 号</th>
+    <th>IP地址</th>
+    <th width="15%">当前机柜</th>
+    <th>当前U位</th>
+    <th width="15%">原机柜号</th>
+  </tr>
+</thead>
+<tbody>
+  {% for obj in queryset %}
+  <tr>
+    <td>{{forloop.counter}}</td>
+    <td style="word-break: break-all;">{{obj.name}}</td>
+    <td style="word-break: break-all;">{{obj.model}}</td>
+    <td style="word-break: break-all;">{%if obj.sn|first == '_' %}无法查看{%else%}{{ obj.sn|upper }}{%endif%}</td>
+    <td style="word-break: break-all;">{{obj.ipaddr}}</td>
+    <td style="word-break: break-all;">{{obj.rack}}</td>
+    <td>{{obj.list_units}}</td>
+    <td>{{obj.last_rack}}</td>
+  </tr>
+  {% endfor %}
+  {% if extra_for %}
+  {% for i in extra_for%}
+  <tr>
+    <td>{{forloop.counter|add:queryset.count}}</td>
+    <td style="word-break: break-all;"></td>
+    <td style="word-break: break-all;"></td>
+    <td style="word-break: break-all;"></td>
+    <td style="word-break: break-all;"></td>
+    <td style="word-break: break-all;"></td>
+    <td style="word-break: break-all;"></td>
+    <td></td>
+  </tr>
+  {% endfor %}
+  {% endif %}
+</tbody>

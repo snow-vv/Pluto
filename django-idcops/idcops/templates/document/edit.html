@@ -1,0 +1,166 @@
+{% extends 'base/base.html' %}
+{% load app_extras static%}
+{% block title %}编辑 {{meta.title}}{% endblock %}
+{% block extra-css %}
+{{form.media.css}}
+<link rel="stylesheet" href="{% static '/idcops/dist/summernote.css' %}">
+{% endblock %}
+{% block content-header %}<h1>{{meta.verbose_name}} <small> 编辑{{meta.verbose_name}}</small></h1>{% endblock %}
+{% block breadcrumb %}
+  <li><a href="{% url 'idcops:index' %}"><i class="fa fa-dashboard"></i> 仪表盘</a></li>
+  <li class="active">{{meta.verbose_name}}</li>
+{% endblock %}
+{% block main-content %}
+<div class="box box-warning">
+    <div class="box-header with-border">
+        <h3 class="box-title"> 编辑{{meta.verbose_name}}</h3>
+        <div class="box-tools pull-right">
+          {%if 'mark' in form.fields%}
+          <button type="button" data-complete-text="已共享" data-toggle="buttons" id="to_shared" class="btn btn-info btn-sm hidden-xs">共享</button>
+          {%endif%}
+        </div>
+    </div>
+    <div class="box-body">
+        <form action="" method="POST" class="form" id="{{meta.model_name}}-edit">
+        {% csrf_token %}
+        {% for hidden in form.hidden_fields %}
+          {{ hidden }}
+        {% endfor %}
+        <div class="box-body">
+        {% for field in form.visible_fields %}
+        <div class="form-group">
+        <label class="control-label">{{ field.label }}:</label>
+          {{field}}
+        <div class="help-block">
+        {{ field.help_text|safe}}
+          <div class="text-red">{{ field.errors}}</div>
+        </div>
+        </div>
+        {% endfor %}
+        </div>
+        <div class="box-footer">
+        <button type="button" class="btn btn-default btn-sm margin-r-5" onclick="window.history.go(-1)">取消并返回</button>
+        <div class="btn-group pull-right">
+        <button type="submit" name="_addanother" class="btn btn-info btn-sm margin-r-5">保存并新增</button>
+        <button type="submit" name="_save" class="btn btn-info btn-sm">提交</button>
+        </div>
+        </div>
+        </form>
+    </div>
+</div>
+{% endblock %}
+{% block extra-js %}
+{{form.media.js}}
+<script src="{%static 'idcops/dist/summernote.js'%}"></script>
+<script src="{%static 'idcops/dist/lang/summernote-zh-CN.min.js'%}"></script>
+<script>
+$(document).ready(function (){
+// reset modal cache
+$('body').on('hidden.bs.modal', '.modal', function () {
+    $(this).removeData('bs.modal');
+});
+    function getCookie(name) {
+      var cookieValue = null;
+      if (document.cookie && document.cookie != '') {
+          var cookies = document.cookie.split(';');
+          for (var i = 0; i < cookies.length; i++) {
+              var cookie = jQuery.trim(cookies[i]);
+              // Does this cookie string begin with the name we want?
+              if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                  cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                  break;
+              }
+          }
+      }
+      return cookieValue;
+    };
+
+    // summernote.image.upload
+    function sendFile(file, el) {
+      var form_data = new FormData();
+      //var csrftoken = getCookie('csrftoken');
+      var csrfmiddlewaretoken = $('form input[name="csrfmiddlewaretoken"]').val()
+      //form_data.append('csrftoken', csrftoken);
+      form_data.append("csrfmiddlewaretoken", csrfmiddlewaretoken);
+      form_data.append('files', file);
+      $.ajax({
+          data: form_data,
+          type: "POST",
+          url: "{%url 'idcops:upload' %}",
+          cache: false,
+          contentType: false,
+          processData: false,
+          success: function (data) {
+            $.each(data.files, function (index, file) {
+              $(el).summernote("insertImage", file.url);
+            });
+          }
+      });
+    }
+
+    $('#id_body').summernote({
+      height: 500,
+      tabsize: 2,
+      lang: 'zh-CN',
+      popover: {
+        image: [],
+        link: [],
+        air: []
+        },
+      callbacks: {
+        onImageUpload : function(files, editor, welEditable) {
+          for(var i = files.length - 1; i >= 0; i--) {
+            sendFile(files[i], this);
+          }
+        }
+      }
+    });
+
+// Select2
+$("select").select2({language: "zh-CN"});
+
+$(function() {
+    $("#to_shared").click(function(){
+        $(this).button('loading').delay(300).queue(function() {
+          $("#id_mark").val('shared');
+          $(this).button('complete');
+          $(this).removeClass('btn-info').addClass('btn-success');
+          $(this).button('reset').delay(300).dequeue();
+        });
+    });
+});
+
+var oldFormData = $('form').serialize();
+$("form").submit(function(){
+  var newFormData = $('form').serialize();
+  if (oldFormData == newFormData){
+    alert("没有任何改变,已经阻止表单提交.");
+    return false;
+  }
+});
+
+//DateTimeField
+var DateTimeField = $("input[data-datetime='true']");
+if (DateTimeField.length != 0) {
+  DateTimeField.daterangepicker({
+    // timePicker: true,
+    // timePickerIncrement: 5,
+    // timePicker24Hour: true,
+    locale:{
+      format: 'YYYY-MM-DD H:mm:ss',
+      applyLabel: '确认',
+      cancelLabel: '取消',
+      fromLabel: '从',
+      toLabel: '到',
+      weekLabel: 'W',
+      customRangeLabel: '选择时间',
+      daysOfWeek:["日","一","二","三","四","五","六"],
+      monthNames: ["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月","十二月"],
+    },
+    singleDatePicker: true
+  });
+}
+
+});
+</script>
+{% endblock %}

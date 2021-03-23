@@ -1,0 +1,52 @@
+{% extends 'base/new.html' %}
+{% load app_extras %}
+
+{% block page-extra %}
+{%if request.GET.rack_id%}
+{% rack_overview request.GET.rack_id ''%}
+{% endif %}
+{% endblock page-extra %}
+
+{% block SubScript %}
+<script>
+$(document).ready(function (){
+
+  $("#id_rack").change(function(){
+    var selected=$(this).children('option:selected').val();
+    if (selected > 0){
+      document.location.href="?rack_id="+selected+"";
+    };
+  });
+
+  $("#id_pdus label.btn,#id_units label.btn").click(function(){
+    $(this).toggleClass('btn-primary');
+  });
+  
+  function sortArray(m,n){return m>n?1:(m<n?-1:0)}
+
+  function checkUnits(array){
+    for(var i=1; i<array.length;i++){
+      if(Math.abs(parseInt(array[i])-parseInt(array[i-1])) != 1){
+        return false;
+      }
+    }
+    return true;
+  }
+
+  // usage
+  // checkUnits(getUnits());
+  function getUnits(){
+    var uSelected = document.getElementsByName('units');
+    var data = new Array();
+    for(var i=0;i<uSelected.length;i++){
+      if(uSelected[i].checked==true){
+        data.push(uSelected[i].parentNode.innerText);
+      }
+    }
+    return data.sort(sortArray);
+  }
+
+
+});
+</script>
+{% endblock SubScript %}

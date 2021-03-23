@@ -1,0 +1,16 @@
+{% extends 'base/list.html' %}
+
+{% block table-sub-tools %}
+{%if can_create%}
+<a class="btn btn-default btn-sm margin-r-5" href="{%url 'idcops:import' meta.model_name %}">
+    <i class="fa fa-cloud-upload"></i><span class="hidden-xs"> 批量导入</span>
+  </a>
+{% endif%}
+{%if actions%}
+{% for a in actions%}
+    <button type="submit" disabled="disabled" name="action" value="{{ a.1 }}" class="action-related disabled btn btn-default btn-sm margin-r-5">
+       <i class="{{a.2}}"></i><span class="hidden-xs"> {{ a.3 }}</span>
+    </button>
+{%endfor%}
+{%endif%}
+{% endblock table-sub-tools %}

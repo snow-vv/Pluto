@@ -1,0 +1,12 @@
+[Unit]
+Description=idcops gunicorn Daemon
+After=network.target
+
+[Service]
+User=www
+Group=www
+WorkingDirectory=/data/mysite
+ExecStart=/data/mysite/env/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 idcops_proj.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,74 @@
+{% extends 'base/detail.html' %}
+{% load static %}
+{% block title %}批量导入 {{meta.title}}{% endblock %}
+
+{% block main-content %}
+<div class="box box-primary">
+    {%block box-header%}
+    <div class="box-header with-border">
+        <h3 class="box-title"> 批量导入{{meta.verbose_name}}</h3>
+        <div class="box-tools pull-right">
+            <div class="btn-group margin-r-5">
+                <button type="button" class="btn btn-default btn-sm" onclick="window.history.go(-1)">
+                    <i class="fa fa-arrow-circle-o-left"></i><span> 返回上一页</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    {%endblock box-header%}
+    {%block form%}
+    <form action="" method="POST" enctype="multipart/form-data" role="form" class="form-horizontal"
+        id="{{meta.model_name}}-new">
+        {%block box-body%}
+        <div class="box-body">
+            {% csrf_token %}
+            <div class="col-md-6 col-md-offset-3">
+                <div class="form-group">
+                    <b>注意事项：</b>
+                    <ol>1、日期格式一定是<b class="text-red">字符串</b>: YYYY-MM-DD，例如：2020-06-06，2020-6-6</ol>
+                    <ol>2、Excel日期转字符串公式：<b class="text-red">=TEXT(日期单元格, "YYYY-MM-DD")</b>，例如：=TEXT(F3, "YYYY-MM-DD")</ol>
+                    <ol>3、U位格式用`|`分割，例如：04，04|06，04|</ol>
+                    <ol>4、由于没有采用后台队列的方式，限制每次最多导入500台设备</ol>
+                    <!-- <ol>5、按照模板填写好内容后，另存为 <b class="text-red">.csv</b> 格式的文件进行导入</ol> -->
+                    <p><a href="{%static 'idcops/file/online_import_template.xlsx'%}">下载导入模板</a></p>
+                </div>
+                <hr>
+
+                {% for field in form.visible_fields %}
+                <div class="form-group">
+                    <label for="{{ field.id_for_label }}">
+                        {{ field.label }}
+                    </label>
+                    {{ field }}
+                    <div class="help-block">
+                        {%if field.field.required%}
+                        <span class="text-red">必填</span>
+                        {%else%}
+                        <span class="text-muted">选填</span>
+                        {%endif%}
+                        {{ field.help_text|safe}}
+                        <div class="text-red">{{ field.errors|safe }}</div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {%endblock box-body%}
+        {%block box-footer%}
+        <div class="box-footer">
+            <button type="button" class="btn btn-default btn-sm" onclick="window.history.go(-1)">取消并返回</button>
+            <div class="btn-group pull-right">
+                <button type="submit" class="btn btn-primary btn-sm margin-r-5">提交</button>
+            </div>
+        </div>
+        {%endblock box-footer%}
+    </form>
+    {%endblock form%}
+</div>
+{% endblock %}
+
+{% block extra-js %}
+<script>
+    $(document).ready(function () { });
+</script>
+{% endblock %}

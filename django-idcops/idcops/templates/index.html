@@ -1,0 +1,262 @@
+{% extends 'base/base.html' %}
+{% load static %}
+{% block content-header %}
+  <h1> {{request.user.onidc.name}}
+    <small>{{request.user.onidc.desc}}概览</small>
+  </h1>
+{% endblock %}
+{% block breadcrumb %}
+<li><a href="{% url 'idcops:index' %}"><i class="fa fa-dashboard"></i>
+  {% if meta %}{{meta.logo}}{% else %}仪表盘{% endif %}
+</a></li>
+<li class="active">仪表盘</li>
+{% endblock %}
+{% block main-content %}
+
+<div class="row">
+  {%for item in state_items%}
+  <div class="col-md-3 col-sm-6 col-xs-12">
+    <div class="info-box">
+      <span class="info-box-icon {{item.icon_color}}"><i class="fa {{item.icon}}"></i></span>
+      <div class="info-box-content">
+        <a href="{%url 'idcops:list' item.model_name%}">
+          <span class="info-box-text">{{item.verbose_name}}</span>
+        </a>
+        <span class="info-box-number">{{item.count}}<small> {{item.metric}}</small></span>
+        {% if item.model_name == 'rack' %}<span class="text-muted">仅计算已启用的机柜</span>{% endif %}
+      </div>
+      <!-- /.info-box-content -->
+    </div>
+    <!-- /.info-box -->
+  </div>
+  <!-- /.col -->
+  {%endfor state_items%}
+  <div class="clearfix visible-sm-block"></div>
+  
+</div>
+
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">设备报表与统计数据</h3>
+    <div class="box-tools pull-right">
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+      </button>
+      <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+    </div>
+  </div>
+
+  <div class="box-body">
+    <div class="row">
+
+      <div class="col-md-7 col-xs-12">
+        <div id="device_dynamic_change" style="min-width:320px;height:400px"></div>
+      </div>
+
+      <div class="clearfix visible-sm-block"></div>
+
+      <div class="col-md-5 col-xs-12">
+        <div id="online_statistics" style="min-width:320px;height:400px"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div class="box">
+  <div class="box-header with-border">
+    <h3 class="box-title">机柜报表与统计数据</h3>
+    <div class="box-tools pull-right">
+      <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+      </button>
+      <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+    </div>
+  </div>
+
+  <div class="box-body">
+    <div class="row">
+      <div class="col-md-6 col-xs-12">
+        <div id="rack_dynamic_change" style="min-width:320px;height:400px"></div>
+      </div>
+      <div class="clearfix visible-sm-block"></div>
+      <div class="col-md-6 col-xs-12">
+        <div id="rack_statistics" style="min-width:320px;height:400px"></div>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+{%endblock%}
+{% block extra-js %}
+
+<script src="{%static 'idcops/js/highcharts.js'%}"></script>
+<script>
+// Build the chart
+Highcharts.chart('rack_statistics', {
+	chart: {
+		plotBackgroundColor: null,
+		plotBorderWidth: null,
+		plotShadow: false,
+		type: 'pie'
+	},
+	title: {
+		text: '已启用机柜信息统计'
+	},
+  tooltip: {
+      headerFormat: '{series.name}<br>',
+      pointFormat: '{point.name}: <b>{point.y} 个</b>'
+  },
+  plotOptions: {
+      pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+              enabled: true,
+              // 通过 format 或 formatter 来格式化数据标签显示
+              //format: '值: {point.y} 占比 {point.percentage} %',
+              formatter: function() {
+                  //this 为当前的点（扇区）对象，可以通过  console.log(this) 来查看详细信息
+                  return '<span style="color: ' + this.point.color + '"> '+this.point.name+'：' + this.y + ' 个</span>';
+              }
+          },
+          showInLegend: true  // 显示在图例中
+      }
+  },
+	series: [{
+		name: '按机柜类型统计',
+		colorByPoint: true,
+		data: [{% for rs in rack_statistics %}['{{rs.0}}',{{ rs.1 }}],{% endfor %}]
+	}]
+});
+
+Highcharts.chart('online_statistics', {
+	chart: {
+		plotBackgroundColor: null,
+		plotBorderWidth: null,
+		plotShadow: false,
+		type: 'pie'
+	},
+	title: {
+		text: '在线设备类型或标签统计'
+	},
+  tooltip: {
+      headerFormat: '{series.name}<br>',
+      pointFormat: '{point.name}: <b>{point.y} 台</b>'
+  },
+  plotOptions: {
+      pie: {
+          allowPointSelect: true,
+          cursor: 'pointer',
+          dataLabels: {
+              enabled: true,
+              // 通过 format 或 formatter 来格式化数据标签显示
+              //format: '值: {point.y} 占比 {point.percentage} %',
+              formatter: function() {
+                  //this 为当前的点（扇区）对象，可以通过  console.log(this) 来查看详细信息
+                  return '<span style="color: ' + this.point.color + '"> '+this.point.name+'：' + this.y + ' 台</span>';
+              }
+          },
+          showInLegend: true  // 显示在图例中
+      }
+  },
+	series: [{
+		name: '按设备类型统计',
+		colorByPoint: true,
+		data: [{% for os in online_statistics %}["{{os.0}}",{{ os.1 }}],{% endfor %}]
+	}]
+});
+
+var chart = Highcharts.chart('device_dynamic_change',{
+    colors: ['#00a65a', '#f39c12', '#dd4b39'],
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '月度设备变更统计'
+    },
+    subtitle: {
+        text: ''
+    },
+    xAxis: {
+        categories: {{device_dynamic_change.categories|safe}},
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '设备变更数 (台)'
+        }
+    },
+    tooltip: {
+        // head + 每个 point + footer 拼接成完整的 table
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.0f} 台</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: '上架',
+        data: {{device_dynamic_change.moveup}}
+    }, {
+        name: '迁移',
+        data: {{device_dynamic_change.moving}}
+    }, {
+        name: '下架',
+        data: {{device_dynamic_change.movedown}}
+    }]
+});
+
+var chart = Highcharts.chart('rack_dynamic_change',{
+    colors: ['#00a65a', '#dd4b39'],
+    chart: {
+        type: 'column'
+    },
+    title: {
+        text: '月度机柜变化统计'
+    },
+    subtitle: {
+        text: ''
+    },
+    xAxis: {
+        categories: {{rack_dynamic_change.categories|safe}},
+        crosshair: true
+    },
+    yAxis: {
+        min: 0,
+        title: {
+            text: '机柜变更数 (个)'
+        }
+    },
+    tooltip: {
+        // head + 每个 point + footer 拼接成完整的 table
+        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+        '<td style="padding:0"><b>{point.y:.0f} 个</b></td></tr>',
+        footerFormat: '</table>',
+        shared: true,
+        useHTML: true
+    },
+    plotOptions: {
+        column: {
+            borderWidth: 0
+        }
+    },
+    series: [{
+        name: '增加',
+        data: {{rack_dynamic_change.renew}}
+    }, {
+        name: '减少',
+        data: {{rack_dynamic_change.release}}
+    }]
+});
+
+$("svg.highcharts-root text.highcharts-credits").remove();
+</script>
+{% endblock %}

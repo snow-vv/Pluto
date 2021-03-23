@@ -1,0 +1,37 @@
+{% block main-content %}
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    <h4 class="modal-title">
+      <span> 更新机柜 {{form.rack.field.initial}} 的{{meta.verbose_name}} </span>
+    </h4>
+</div>
+<form action="{%url 'idcops:new' meta.model_name%}?rack_id={{request.GET.rack_id}}" method="POST" role="form" class="form-horizontal" id="{{meta.model_name}}-new">
+  <div class="box-body">
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+      {{ hidden }}
+    {% endfor %}
+    {% for field in form.visible_fields %}
+    <div class="form-group">
+      <label for="{{ field.id_for_label }}" class="col-sm-2 control-label">
+        {{ field.label }}
+      </label>
+      <div class="col-sm-5">
+      {{ field }}
+      </div>
+      <div class="col-sm-5 help-block">
+        {%if field.field.required%}<span class="text-red">必填 </span>{%endif%}
+          {{ field.help_text|safe}}
+      <div class="text-red">{{ field.errors|safe }}</div>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+    <div class="box-footer">
+      <button type="button" class="btn btn-default btn-sm"  type="button" class="close" data-dismiss="modal" aria-label="Close">取消</button>
+      <div class="pull-right">
+        <button type="submit" name="_last" class="btn btn-primary btn-sm margin-r-5">提交</button>
+      </div>
+    </div>
+</form>
+{% endblock main-content %}

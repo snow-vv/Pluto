@@ -1,0 +1,168 @@
+{% spaceless %}
+<!DOCTYPE html>
+{% load static cache %}
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>{% block title %}{{meta.title}}{% endblock %}</title>
+  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+  <link rel="icon" href="{%static 'idcops/favicon.png'%}" sizes="32x32">
+  <link rel="stylesheet" href="{%static 'idcops/css/bootstrap.min.css'%}">
+  <link rel="stylesheet" href="{%static 'idcops/css/font-awesome.min.css'%}">
+  {% block extra-css %}{% endblock %}
+  <link rel="stylesheet" href="{%static 'idcops/css/AdminLTE.min.css'%}">
+  <!--[if lt IE 9]>
+  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  {% block extra-css0 %}{% endblock %}
+  <style>
+  body {-apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif !important;}
+  @media print {
+    a[href]:after {
+      content: none !important;
+    }
+  }
+  </style>
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<!--body class="skin-blue fixed sidebar-mini sidebar-mini-expand-feature"-->
+<!--body class="skin-blue fixed sidebar-mini sidebar-mini-expand-feature"-->
+<div class="wrapper">
+  <header class="main-header no-print">
+  {% block main-header %}
+    <a href="{% url 'idcops:index' %}" class="logo">
+      <span class="logo-mini"><b>i</b>OPS</span>
+      <span class="logo-lg"><b>idcops </b> {{meta.logo}}</span>
+    </a>
+    <nav class="navbar navbar-static-top" role="navigation">
+      <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          {%block notifications%}{%include 'user/notify.html'%}{%endblock notifications%}
+          <li class="dropdown user user-menu">
+            {% block user-menu %}{% include 'user/panel.html'%}{% endblock %}
+          </li>
+        </ul>
+      </div>
+    </nav>
+  {% endblock %}
+  </header>
+  {% cache 180 main-sidebar request.user.id request.path %}
+  <aside class="main-sidebar no-print">
+    {% block main-sidebar %}
+    <section class="sidebar">
+      <ul class="sidebar-menu" data-widget="tree">
+        {%for menu in menus%}<li class="header"></li>
+          {%for m in menu%}
+          <li{%ifequal m.model_name meta.model_name %} class="active"{% endifequal %}>
+            <a href="{{m.uri}}">
+              <i class="{{m.icon}} {{m.icon_color}}"></i>
+              <span>{{m.verbose_name}}</span></a>
+          </li>
+          {%endfor%}
+        {%endfor%}
+      </ul>
+    </section>
+  {% endblock %}
+  </aside>
+  {% endcache %}
+  <div class="content-wrapper">
+    <section class="content-header">
+    {% block content-header %}<h1>页面头部 <small> 页面描述</small></h1>{% endblock %}
+      <ol class="breadcrumb">
+        {% block breadcrumb %}
+        <li><a href="{% url 'idcops:index' %}"><i class="fa fa-dashboard"></i>
+          {% if meta %}{{meta.logo}}{% else %}仪表盘{% endif %}
+        </a></li>
+        <li class="active"><i class="{{meta.icon}}"></i> {{meta.verbose_name}}</li>
+        {% endblock %}
+      </ol>
+    </section>
+    <section class="content container-fluid">
+     {%if messages%}
+        {%for message in messages%}
+        <div style="padding:10px; margin-bottom:15px;" class="alert alert-{% if message.tags %}{{ message.tags }}{% endif %} no-print">
+          <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+          <b>{{message}}</b>
+        </div>
+        {%endfor%}
+      {%endif%}
+    {% block main-content %}{%endblock%}
+    <div class="modal fade" id="modal-lg" role="dialog" aria-labelledby="modal-lg" aria-hidden="true" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <!-- link to object detail -->
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modal-lg-static" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="modal-lg-static" aria-hidden="true" style="z-index: 1060;">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        <!-- link to object detail -->
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="modal-static" tabindex="-1" role="dialog" data-keyboard="false" data-backdrop="static" aria-labelledby="modal-static" aria-hidden="true" style="z-index: 1060;">
+      <div class="modal-dialog">
+        <div class="modal-content">
+        <!-- link to object detail -->
+        </div>
+      </div>
+    </div>
+    </section>
+  </div>
+  <footer class="main-footer no-print">
+    {% block mian-footer %}
+    <div class="pull-right hidden-xs">{{request.user.onidc.duty}}电话: {{request.user.onidc.tel}}</div>
+    <strong>Copyright © 2016 - {%now 'Y'%}<a target="_blank" href="http://www.iloxp.com/"> idcops</a>.</strong> All rights reserved.
+    {% endblock %}
+  </footer>
+</div>
+<script src="{%static 'idcops/js/jquery.min.js'%}"></script>
+<script src="{%static 'idcops/js/bootstrap.min.js'%}"></script>
+{% block extra-js %}{% endblock %}
+<script src="{%static 'idcops/js/adminlte.min.js'%}"></script>
+<script>
+function getCookie(name){
+  var cookieVal = null;
+  if (document.cookie && document.cookie !== ''){
+    var cookies = document.cookie.split(';');
+    for (var i=0; i< cookies.length; i++){
+      var arr = cookies[i].split("=");
+      if (arr[0]==name){
+        cookieVal = arr[1];
+      }
+    }
+  }
+  return cookieVal;
+}
+
+</script>
+
+<script>
+  var _hmt = _hmt || [];
+  (function() {
+    var hm = document.createElement("script");
+    hm.src = "https://hm.baidu.com/hm.js?3e305013576f9d990b402e2fa02f8e70";
+    var s = document.getElementsByTagName("script")[0]; 
+    s.parentNode.insertBefore(hm, s);
+  })();
+  </script>
+  
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-81350925-2"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-81350925-2');
+</script>
+  
+</body>
+</html>
+{% endspaceless %}

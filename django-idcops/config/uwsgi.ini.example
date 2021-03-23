@@ -1,0 +1,27 @@
+[uwsgi]
+PROJ_DIR = /data/django-idcops
+; 根据项目位置修改 PROJ_DIR 
+vacuum = true
+py-autoreload = 3
+master = true
+virtualenv = %(PROJ_DIR)/env
+env = LANG=en_US.UTF-8
+env DJANGO_SETTINGS_MODULE=idcops_proj.settings 
+chdir = %(PROJ_DIR)
+wsgi-file = %(PROJ_DIR)/idcops_proj/wsgi.py
+touch-reload = %(PROJ_DIR)/requirements.txt
+pidfile = %(PROJ_DIR)/run/uwsgi.pid
+socket = %(PROJ_DIR)/run/uwsgi.sock
+daemonize = %(PROJ_DIR)/logs/uwsgi.log
+chmod-socket = 664
+max-requests = 4096
+processes = 5
+die-on-term = true
+uid = nginx
+; 这里是以nginx这个用户启动uwsgi
+gid = nginx
+; uwsgi属组
+thunder-lock = true
+stats = 127.0.0.1:8090
+emperor-tyrant = true
+cap = setgid,setuid

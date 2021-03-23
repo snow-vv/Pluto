@@ -1,0 +1,22 @@
+{% extends 'base/detail.html' %}
+{% load app_extras %}
+{%block box-tools-extra%}
+{% if object.actived %}
+<div class="btn-group margin-r-5">
+  {%if 'idcops.add_online' in perms %}
+  <a class="btn btn-default btn-sm" href="/new/online/?rack_id={{object.pk}}">
+    <i class="fa fa-server"></i><span class="hidden-xs"> 新建设备</span>
+  </a>
+  {%endif%}
+
+  {%if 'idcops.add_rextend' in perms%}
+  <a class="btn btn-default btn-sm" href="{%url 'idcops:new' 'rextend'%}?rack_id={{object.pk}}" data-toggle="modal" data-target="#modal-lg-static">
+    <i class="fa fa-battery-2"></i><span class="hidden-xs"> 更新电量</span>
+  </a>
+  {%endif%}
+</div>
+{% endif %}
+{%endblock box-tools-extra%}
+{% block page-extra %}
+{% rack_overview object.id '' %}
+{% endblock %}

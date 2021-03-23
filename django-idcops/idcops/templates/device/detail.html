@@ -1,0 +1,37 @@
+{% extends 'base/detail.html' %}
+{%block object_after%}
+{%if object.move_history%}
+<br>
+<b>变更信息:</b>
+<table class="table table-bordered table-condensed nowarp">
+  <thead>
+    <tr class="active">
+      <th>序号</th>
+      <th>历史区域</th>
+      <th>历史机柜</th>
+      <th>历史U位</th>
+      <th>变更类型</th>
+      <th>变更信息</th>
+      <th>操作</th>
+    </tr>
+  </thead>
+  <tbody>
+  {%for log in object.move_history%}
+    <tr class="{% cycle '' 'active' %}">
+      <td <td width="5%" id="log_id-{{log.id}}">{{forloop.revcounter}}</td>
+      <td>{{log.rack.zone}}</td>
+      <td>{{log.rack}}</td>
+      <td>{{log.units}}</td>
+      <td>{{log.type}}</td>
+      <td width="20%">{{log.created}}<small> {{log.creator}}</small></td>
+      <td width="5%">
+        <a data-toggle="modal" data-target="#modal-lg-static" class="label text-red" href="{%url 'idcops:detail' 'syslog' log.id%}">
+          <i class="fa fa-trash"></i> 删除
+        </a>
+      </td>
+    </tr>
+  {%endfor%}
+  </tbody>
+</table>
+{%endif%}
+{%endblock object_after%}
